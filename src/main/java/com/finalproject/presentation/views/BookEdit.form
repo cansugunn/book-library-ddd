@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="com.finalproject.presentation.views.BookEdit">
+  <grid id="27dc6" binding="mainPanel" layout-manager="GridLayoutManager" row-count="8" column-count="2" 
+        same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+    <margin top="10" left="10" bottom="10" right="10"/>
+    <constraints>
+      <xy x="20" y="20" width="500" height="400"/>
+    </constraints>
+    <properties/>
+    <border type="none"/>
+    <children>
+      <component id="labelAuthorName" class="javax.swing.JLabel">
+        <constraints>
+          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0"/>
+        </constraints>
+        <properties>
+          <text value="Author Name:"/>
+        </properties>
+      </component>
+      <component id="authorNameField" class="javax.swing.JTextField" binding="authorNameField">
+        <constraints>
+          <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1"/>
+        </constraints>
+      </component>
+
+      <component id="labelAuthorSurname" class="javax.swing.JLabel">
+        <constraints>
+          <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0"/>
+        </constraints>
+        <properties>
+          <text value="Author Surname:"/>
+        </properties>
+      </component>
+      <component id="authorSurnameField" class="javax.swing.JTextField" binding="authorSurnameField">
+        <constraints>
+          <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1"/>
+        </constraints>
+      </component>
+
+      <component id="labelTitle" class="javax.swing.JLabel">
+        <constraints>
+          <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0"/>
+        </constraints>
+        <properties>
+          <text value="Title:"/>
+        </properties>
+      </component>
+      <component id="titleField" class="javax.swing.JTextField" binding="titleField">
+        <constraints>
+          <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1"/>
+        </constraints>
+      </component>
+
+      <component id="labelYear" class="javax.swing.JLabel">
+        <constraints>
+          <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0"/>
+        </constraints>
+        <properties>
+          <text value="Year:"/>
+        </properties>
+      </component>
+      <component id="yearField" class="javax.swing.JTextField" binding="yearField">
+        <constraints>
+          <grid row="3" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1"/>
+        </constraints>
+      </component>
+
+      <component id="labelPages" class="javax.swing.JLabel">
+        <constraints>
+          <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0"/>
+        </constraints>
+        <properties>
+          <text value="Number of Pages:"/>
+        </properties>
+      </component>
+      <component id="numberOfPagesField" class="javax.swing.JTextField" binding="numberOfPagesField">
+        <constraints>
+          <grid row="4" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1"/>
+        </constraints>
+      </component>
+
+      <component id="labelAbout" class="javax.swing.JLabel">
+        <constraints>
+          <grid row="5" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0"/>
+        </constraints>
+        <properties>
+          <text value="About:"/>
+        </properties>
+      </component>
+      <scrollpane id="aboutScrollPane">
+        <constraints>
+          <grid row="5" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="2" anchor="8" fill="1"/>
+        </constraints>
+        <properties/>
+        <border type="none"/>
+        <children>
+          <component id="aboutArea" class="javax.swing.JTextArea" binding="aboutArea">
+            <constraints/>
+            <properties>
+              <rows value="3"/>
+            </properties>
+          </component>
+        </children>
+      </scrollpane>
+
+      <component id="labelCover" class="javax.swing.JLabel">
+        <constraints>
+          <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0"/>
+        </constraints>
+        <properties>
+          <text value="Cover Path:"/>
+        </properties>
+      </component>
+      <component id="coverPathField" class="javax.swing.JTextField" binding="coverPathField">
+        <constraints>
+          <grid row="6" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1"/>
+        </constraints>
+      </component>
+
+      <component id="updateButton" class="javax.swing.JButton" binding="updateButton">
+        <constraints>
+          <grid row="7" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="4" fill="0"/>
+        </constraints>
+        <properties>
+          <text value="Update Book"/>
+        </properties>
+      </component>
+    </children>
+  </grid>
+</form> 

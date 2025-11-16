@@ -1,0 +1,266 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="com.finalproject.presentation.views.DisplayBook">
+  <grid id="displayBookInfoPanel" binding="mainPanel" layout-manager="GridLayoutManager" row-count="13" column-count="5" same-size-horizontally="false" same-size-vertically="false" hgap="15" vgap="10">
+    <margin top="20" left="20" bottom="20" right="20"/>
+    <constraints>
+      <xy x="20" y="20" width="800" height="600"/>
+    </constraints>
+    <properties>
+      <background color="-1"/>
+    </properties>
+    <border type="none"/>
+    <children>
+      <component id="labelBookId" class="javax.swing.JLabel">
+        <constraints>
+          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <font name="Segoe UI" size="14"/>
+          <text value="Book ID:"/>
+        </properties>
+      </component>
+      <component id="bookIdField" class="javax.swing.JTextField" binding="bookIdField">
+        <constraints>
+          <grid row="0" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <font name="Segoe UI" size="14"/>
+          <preferredSize width="150" height="30"/>
+        </properties>
+      </component>
+      <component id="displayButton" class="javax.swing.JButton" binding="displayButton">
+        <constraints>
+          <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <background color="-14145496"/>
+          <font name="Segoe UI" size="14" style="1"/>
+          <foreground color="-1"/>
+          <preferredSize width="100" height="30"/>
+          <text value="Display"/>
+        </properties>
+      </component>
+      <component id="manageStateButton" class="javax.swing.JButton" binding="manageStateButton">
+        <constraints>
+          <grid row="0" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <background color="-14145496"/>
+          <enabled value="false"/>
+          <font name="Segoe UI" size="14" style="1"/>
+          <foreground color="-1"/>
+          <preferredSize width="120" height="30"/>
+          <text value="Manage State"/>
+        </properties>
+      </component>
+      <component id="labelTitle" class="javax.swing.JLabel">
+        <constraints>
+          <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <font name="Segoe UI" size="14"/>
+          <text value="Title:"/>
+        </properties>
+      </component>
+      <component id="titleLabel" class="javax.swing.JLabel" binding="titleLabel">
+        <constraints>
+          <grid row="2" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <font name="Segoe UI" size="14"/>
+        </properties>
+      </component>
+      <component id="labelAuthor" class="javax.swing.JLabel">
+        <constraints>
+          <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <font name="Segoe UI" size="14"/>
+          <text value="Author Name: "/>
+        </properties>
+      </component>
+      <component id="authorLabel" class="javax.swing.JLabel" binding="authorNameLabel">
+        <constraints>
+          <grid row="3" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <font name="Segoe UI" size="14"/>
+        </properties>
+      </component>
+      <component id="labelYear" class="javax.swing.JLabel">
+        <constraints>
+          <grid row="5" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <font name="Segoe UI" size="14"/>
+          <text value="Year:"/>
+        </properties>
+      </component>
+      <component id="yearLabel" class="javax.swing.JLabel" binding="yearLabel">
+        <constraints>
+          <grid row="5" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <font name="Segoe UI" size="14"/>
+        </properties>
+      </component>
+      <component id="labelPages" class="javax.swing.JLabel">
+        <constraints>
+          <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <font name="Segoe UI" size="14"/>
+          <text value="Pages:"/>
+        </properties>
+      </component>
+      <component id="pagesLabel" class="javax.swing.JLabel" binding="pagesLabel">
+        <constraints>
+          <grid row="6" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <font name="Segoe UI" size="14"/>
+        </properties>
+      </component>
+      <component id="labelAbout" class="javax.swing.JLabel">
+        <constraints>
+          <grid row="7" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <font name="Segoe UI" size="14"/>
+          <text value="About:"/>
+        </properties>
+      </component>
+      <component id="aboutLabel" class="javax.swing.JLabel" binding="aboutLabel">
+        <constraints>
+          <grid row="7" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <font name="Segoe UI" size="14"/>
+        </properties>
+      </component>
+      <component id="labelRating" class="javax.swing.JLabel">
+        <constraints>
+          <grid row="9" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <font name="Segoe UI" size="14"/>
+          <text value="Rating:"/>
+        </properties>
+      </component>
+      <component id="ratingLabel" class="javax.swing.JLabel" binding="ratingLabel">
+        <constraints>
+          <grid row="9" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <font name="Segoe UI" size="14"/>
+        </properties>
+      </component>
+      <component id="labelReleaseDate" class="javax.swing.JLabel">
+        <constraints>
+          <grid row="10" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <font name="Segoe UI" size="14"/>
+          <text value="Release Date:"/>
+        </properties>
+      </component>
+      <component id="releaseDateLabel" class="javax.swing.JLabel" binding="releaseDateLabel">
+        <constraints>
+          <grid row="10" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <font name="Segoe UI" size="14"/>
+        </properties>
+      </component>
+      <component id="labelComments" class="javax.swing.JLabel">
+        <constraints>
+          <grid row="11" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <font name="Segoe UI" size="14"/>
+          <text value="Comments:"/>
+        </properties>
+      </component>
+      <component id="commentsLabel" class="javax.swing.JLabel" binding="commentsLabel">
+        <constraints>
+          <grid row="11" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <font name="Segoe UI" size="14"/>
+        </properties>
+      </component>
+      <component id="labelCoverPath" class="javax.swing.JLabel">
+        <constraints>
+          <grid row="12" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <font name="Segoe UI" size="14"/>
+          <text value="Cover Path:"/>
+        </properties>
+      </component>
+      <component id="coverPathLabel" class="javax.swing.JLabel" binding="coverPathLabel">
+        <constraints>
+          <grid row="12" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <font name="Segoe UI" size="14"/>
+        </properties>
+      </component>
+      <component id="coverLabel" class="javax.swing.JLabel" binding="coverLabel">
+        <constraints>
+          <grid row="2" column="3" row-span="11" col-span="2" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <background color="-1"/>
+          <horizontalAlignment value="0"/>
+          <horizontalTextPosition value="0"/>
+          <minimumSize width="160" height="200"/>
+          <opaque value="true"/>
+          <preferredSize width="160" height="200"/>
+          <text value=""/>
+        </properties>
+      </component>
+      <vspacer id="spacer1">
+        <constraints>
+          <grid row="1" column="0" row-span="1" col-span="5" vsize-policy="0" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false">
+            <preferred-size width="-1" height="20"/>
+          </grid>
+        </constraints>
+      </vspacer>
+      <component id="b199d" class="javax.swing.JLabel">
+        <constraints>
+          <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <font name="Segoe UI" size="14"/>
+          <text value="Author Surname:"/>
+        </properties>
+      </component>
+      <component id="11d3a" class="javax.swing.JLabel" binding="authorSurnameLabel">
+        <constraints>
+          <grid row="4" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <font name="Segoe UI" size="14"/>
+        </properties>
+      </component>
+      <component id="8bb31" class="javax.swing.JLabel">
+        <constraints>
+          <grid row="8" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <font name="Segoe UI" size="14"/>
+          <text value="Read"/>
+        </properties>
+      </component>
+      <component id="ceb1b" class="javax.swing.JLabel" binding="readLabel">
+        <constraints>
+          <grid row="8" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <font name="Segoe UI" size="14"/>
+        </properties>
+      </component>
+    </children>
+  </grid>
+</form>
