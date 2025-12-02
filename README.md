@@ -1,5 +1,7 @@
 # Book Library DDD
 
+![](images/2.png)
+
 A desktop library manager built with Domain-Driven Design (DDD) and hexagonal architecture principles. The Swing UI authenticates users, manages favorites and wishlists, and lets administrators curate the catalog while persisting state to MySQL via JDBC.
 
 ## Architecture Overview
