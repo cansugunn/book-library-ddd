@@ -1,6 +1,4 @@
 package com.finalproject.application.dto.auth;
 
-import jakarta.validation.constraints.NotBlank;
-
-public record LoginCommand(@NotBlank String username, @NotBlank String password) {
+public record LoginCommand(String username, String password) {
 }
