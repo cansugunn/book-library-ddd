@@ -2,32 +2,45 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Book details</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${book.title}"></title>
     <link rel="stylesheet/less" type="text/css" href="/resources/less/mvc.less" />
     <script src="https://cdn.jsdelivr.net/npm/less@4"></script>
 </head>
 <body>
-<div class="topbar">
-    <div class="brand">Book Library</div>
-    <div class="actions">
-        <a th:href="@{/mvc/books}">Books</a>
-        <a th:href="@{/mvc/users/me/favourites}">My favourites</a>
-        <a th:href="@{/mvc/logout}">Logout</a>
-    </div>
-</div>
-<div class="page">
-    <div class="card">
-        <h2 th:text="${book.title}"></h2>
-        <p>Author: <a th:href="@{/mvc/users/me}" th:text="${book.authorName + ' ' + book.authorSurname}"></a></p>
+<header class="nav-shell compact">
+    <div class="logo">Bookverse</div>
+    <nav class="nav-actions">
+        <a th:href="@{/mvc}">Explore</a>
+        <a th:href="@{/mvc/login}" th:if="${user == null}">Log in</a>
+        <a th:href="@{/mvc/users/me}" th:if="${user != null}" th:text="${user.username}"></a>
+    </nav>
+</header>
+
+<section class="book-hero">
+    <img class="book-hero-cover" th:src="${book.coverPath}" alt="cover"/>
+    <div class="book-hero-copy">
+        <h1 th:text="${book.title}"></h1>
+        <p class="meta" th:text="${book.authorName + ' ' + book.authorSurname + ' · ' + book.year}"></p>
         <p th:text="${book.about}"></p>
-        <h3>Rating and comments</h3>
-        <p>Rating: <span th:text="${bookState.rating}"></span></p>
+        <a class="hero-btn" th:href="@{/mvc/users/me/favourites}" th:if="${user != null}">See my favourites</a>
+        <a class="hero-btn" th:href="@{/mvc/login}" th:if="${user == null}">Log in for personalized ratings</a>
+    </div>
+</section>
+
+<section class="section">
+    <h2>Ratings & comments</h2>
+    <div class="card" th:if="${bookState != null}">
+        <p>My rating: <strong th:text="${bookState.rating}"></strong></p>
         <ul>
             <li th:each="comment : ${bookState.comments}">
                 <a th:href="@{/mvc/users/me/comments}" th:text="${comment}"></a>
             </li>
         </ul>
     </div>
-</div>
+    <div class="card" th:if="${bookState == null}">
+        <p>This section is available for logged users with personal reading state.</p>
+    </div>
+</section>
 </body>
 </html>

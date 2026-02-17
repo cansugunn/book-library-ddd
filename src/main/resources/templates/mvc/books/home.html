@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bookverse</title>
+    <link rel="stylesheet/less" type="text/css" href="/resources/less/mvc.less" />
+    <script src="https://cdn.jsdelivr.net/npm/less@4"></script>
+</head>
+<body>
+<header class="nav-shell">
+    <div class="logo">Bookverse</div>
+    <form class="search"><input placeholder="Search stories, authors, tags"/></form>
+    <nav class="nav-actions" th:if="${user == null}">
+        <a th:href="@{/mvc/login}">Log in</a>
+        <a class="cta" th:href="@{/mvc/login}">Join now</a>
+    </nav>
+    <nav class="nav-actions" th:if="${user != null}">
+        <a th:href="@{/mvc/users/me}" th:text="${user.username + ' (' + user.userType + ')'}"></a>
+        <a th:href="@{/mvc/users/me/favourites}">Favourites</a>
+        <a th:href="@{/mvc/logout}">Log out</a>
+    </nav>
+</header>
+
+<section class="hero">
+    <div class="hero-copy">
+        <h1>Come for the story. Stay for the connection.</h1>
+        <p>Discover books, open details, and enjoy a modern reading feed. Guests can explore freely, members unlock personal favourites and ratings.</p>
+        <a class="hero-btn" th:href="@{/mvc/login}" th:if="${user == null}">Start reading</a>
+        <a class="hero-btn" th:href="@{/mvc/users/me/favourites}" th:if="${user != null}">Open my favourites</a>
+    </div>
+    <div class="hero-art">
+        <div class="wave"></div>
+        <div class="bubble" th:each="book : ${heroBooks}">
+            <img th:src="${book.coverUrl}" alt="cover"/>
+            <div>
+                <strong th:text="${book.title}"></strong>
+                <small th:text="${book.author}"></small>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section">
+    <div class="section-head">
+        <h2>Trending now</h2>
+    </div>
+    <div class="carousel">
+        <a class="story-card" th:each="book : ${bookCards}" th:href="@{/mvc/books/{id}(id=${book.id})}">
+            <img th:src="${book.coverUrl}" alt="cover"/>
+            <h3 th:text="${book.title}"></h3>
+            <p th:text="${book.author}"></p>
+        </a>
+    </div>
+</section>
+
+<section class="section muted">
+    <div class="grid-list">
+        <a class="list-item" th:each="book : ${bookCards}" th:href="@{/mvc/books/{id}(id=${book.id})}">
+            <img th:src="${book.coverUrl}" alt="cover"/>
+            <div>
+                <h4 th:text="${book.title}"></h4>
+                <p th:text="${book.about}"></p>
+            </div>
+        </a>
+    </div>
+    <div class="pager">
+        <a th:if="${booksPage.page > 0}" th:href="@{/mvc(page=${booksPage.page - 1},size=${booksPage.size})}">Previous</a>
+        <span th:text="${'Page ' + (booksPage.page + 1) + ' / ' + (booksPage.totalPages == 0 ? 1 : booksPage.totalPages)}"></span>
+        <a th:if="${booksPage.page + 1 < booksPage.totalPages}" th:href="@{/mvc(page=${booksPage.page + 1},size=${booksPage.size})}">Next</a>
+    </div>
+</section>
+</body>
+</html>

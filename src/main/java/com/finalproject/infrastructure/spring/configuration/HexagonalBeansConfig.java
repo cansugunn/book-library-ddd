@@ -9,6 +9,7 @@ import com.finalproject.application.ports.input.services.BookCommandApplicationS
 import com.finalproject.application.ports.input.services.BookQueryApplicationService;
 import com.finalproject.application.ports.input.services.UserApplicationService;
 import com.finalproject.application.ports.input.services.UserBookStateApplicationService;
+import com.finalproject.application.ports.output.fms.FileManagementService;
 import com.finalproject.application.ports.output.repository.AuthorRepository;
 import com.finalproject.application.ports.output.repository.BookRepository;
 import com.finalproject.application.ports.output.repository.UnitOfWork;
@@ -26,6 +27,7 @@ import com.finalproject.infrastructure.spring.persistence.jpa.adapter.JpaBookRep
 import com.finalproject.infrastructure.spring.persistence.jpa.adapter.JpaUserBookStateRepositoryAdapter;
 import com.finalproject.infrastructure.spring.persistence.jpa.adapter.JpaUserRepositoryAdapter;
 import com.finalproject.infrastructure.spring.persistence.jpa.config.JpaUnitOfWork;
+import com.finalproject.infrastructure.common.fms.LocalFileManagementService;
 import com.finalproject.infrastructure.common.security.CypherPasswordEncryptor;
 import com.finalproject.infrastructure.common.security.ThreadLocalCurrentUser;
 import org.springframework.context.annotation.Bean;
@@ -70,6 +72,11 @@ public class HexagonalBeansConfig {
     }
 
     @Bean
+    public FileManagementService fileManagementService() {
+        return new LocalFileManagementService();
+    }
+
+    @Bean
     public AuthorApplicationService authorApplicationService(AuthorRepository authorRepository,
                                                              CurrentUser currentUser) {
         return new AuthorApplicationServiceImpl(authorRepository, new AuthorDataMapper(), currentUser);
@@ -89,8 +96,9 @@ public class HexagonalBeansConfig {
 
     @Bean
     public BookQueryApplicationService bookQueryApplicationService(BookRepository bookRepository,
-                                                                   AuthorRepository authorRepository) {
-        return new BookQueryApplicationServiceImpl(bookRepository, authorRepository, new BookDataMapper());
+                                                                   AuthorRepository authorRepository,
+                                                                   FileManagementService fileManagementService) {
+        return new BookQueryApplicationServiceImpl(bookRepository, authorRepository, new BookDataMapper(), fileManagementService);
     }
 
     @Bean
@@ -105,12 +113,14 @@ public class HexagonalBeansConfig {
                                                                            BookRepository bookRepository,
                                                                            AuthorRepository authorRepository,
                                                                            UserRepository userRepository,
-                                                                           CurrentUser currentUser) {
+                                                                           CurrentUser currentUser,
+                                                                           FileManagementService fileManagementService) {
         return new UserBookStateApplicationServiceImpl(userBookStateRepository,
                 bookRepository,
                 authorRepository,
                 userRepository,
                 new UserBookStateMapper(),
-                currentUser);
+                currentUser,
+                fileManagementService);
     }
 }

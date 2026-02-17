@@ -3,19 +3,28 @@ package com.finalproject.presentation.spring.mvc;
 import com.finalproject.application.dto.FindBookResponse;
 import com.finalproject.application.dto.FindUserBookStateResponse;
 import com.finalproject.application.dto.FindUserResponse;
+import com.finalproject.application.dto.book.query.GetBookQuery;
 import com.finalproject.application.dto.page.PageQuery;
 import com.finalproject.application.dto.page.PageResult;
 import com.finalproject.application.ports.input.services.BookQueryApplicationService;
 import com.finalproject.application.ports.input.services.UserApplicationService;
 import com.finalproject.application.ports.input.services.UserBookStateApplicationService;
+import com.finalproject.presentation.spring.mvc.dto.BookCardView;
 import jakarta.servlet.http.HttpSession;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Collections;
 import java.util.List;
 
 @Controller
@@ -39,13 +48,23 @@ public class MvcController {
     }
 
     @GetMapping({"", "/"})
-    public String mvcRoot(HttpSession session) {
-        return isLoggedIn(session) ? "redirect:/mvc/books" : "redirect:/mvc/login";
+    public String mvcRoot(@PageableDefault(size = 12) Pageable pageable,
+                          HttpSession session,
+                          Model model) {
+        MvcSessionUser user = getSessionUser(session);
+        PageResult<FindBookResponse> result = bookQueryApplicationService
+                .findAllBooks(new PageQuery(pageable.getPageNumber(), pageable.getPageSize()));
+
+        model.addAttribute("user", user);
+        model.addAttribute("heroBooks", toBookCards(result.content().stream().limit(6).toList()));
+        model.addAttribute("booksPage", result);
+        model.addAttribute("bookCards", toBookCards(result.content()));
+        return "mvc/books/home";
     }
 
     @GetMapping("/login")
     public String loginPage(HttpSession session) {
-        return isLoggedIn(session) ? "redirect:/mvc/books" : "mvc/login";
+        return getSessionUser(session) != null ? "redirect:/mvc" : "mvc/login";
     }
 
     @PostMapping("/login")
@@ -56,9 +75,9 @@ public class MvcController {
         try {
             FindUserResponse user = userApplicationService.findUser(username, password);
             session.setAttribute(SESSION_USER_KEY, new MvcSessionUser(user.getId(), user.getUsername(), user.getUserType()));
-            return "redirect:/mvc/books";
+            return "redirect:/mvc";
         } catch (RuntimeException ex) {
-            redirectAttributes.addFlashAttribute("error", ex.getMessage());
+            redirectAttributes.addFlashAttribute("error", "Invalid credentials");
             return "redirect:/mvc/login";
         }
     }
@@ -66,31 +85,21 @@ public class MvcController {
     @GetMapping("/logout")
     public String logout(HttpSession session) {
         session.invalidate();
-        return "redirect:/mvc/login";
-    }
-
-    @GetMapping("/books")
-    public String books(@PageableDefault(size = 8) Pageable pageable,
-                        HttpSession session,
-                        Model model) {
-        MvcSessionUser user = requireUser(session);
-        PageResult<FindBookResponse> result = mvcUserContextRunner.runAs(user,
-                () -> bookQueryApplicationService.findAllBooks(new PageQuery(pageable.getPageNumber(), pageable.getPageSize())));
-
-        model.addAttribute("user", user);
-        model.addAttribute("booksPage", result);
-        return "mvc/books/list";
+        return "redirect:/mvc";
     }
 
     @GetMapping("/books/{bookId}")
     public String bookDetails(@PathVariable int bookId,
                               HttpSession session,
                               Model model) {
-        MvcSessionUser user = requireUser(session);
-        FindBookResponse book = mvcUserContextRunner.runAs(user,
-                () -> bookQueryApplicationService.findBook(new com.finalproject.application.dto.book.query.GetBookQuery(bookId)));
-        FindUserBookStateResponse state = mvcUserContextRunner.runAs(user,
-                () -> userBookStateApplicationService.findUserBookOfCurrentUser(bookId));
+        MvcSessionUser user = getSessionUser(session);
+        FindBookResponse book = bookQueryApplicationService.findBook(new GetBookQuery(bookId));
+
+        FindUserBookStateResponse state = null;
+        if (user != null) {
+            state = mvcUserContextRunner.runAs(user,
+                    () -> userBookStateApplicationService.findUserBookOfCurrentUser(bookId));
+        }
 
         model.addAttribute("user", user);
         model.addAttribute("book", book);
@@ -125,15 +134,45 @@ public class MvcController {
         return myUserPage(session, model);
     }
 
-    private boolean isLoggedIn(HttpSession session) {
-        return session.getAttribute(SESSION_USER_KEY) instanceof MvcSessionUser;
+    @GetMapping("/media/cover")
+    @ResponseBody
+    public ResponseEntity<Resource> mediaCover(@RequestParam("path") String path) {
+        try {
+            Path cover = Path.of(path).normalize().toAbsolutePath();
+            if (!Files.exists(cover) || !Files.isRegularFile(cover)) {
+                return ResponseEntity.notFound().build();
+            }
+            String type = Files.probeContentType(cover);
+            MediaType mediaType = type == null ? MediaType.APPLICATION_OCTET_STREAM : MediaType.parseMediaType(type);
+            return ResponseEntity.ok().contentType(mediaType).body(new FileSystemResource(cover));
+        } catch (Exception e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    private List<BookCardView> toBookCards(List<FindBookResponse> books) {
+        return books == null ? Collections.emptyList() : books.stream()
+                .map(b -> new BookCardView(
+                        b.getBookId(),
+                        b.getTitle(),
+                        (b.getAuthorName() + " " + b.getAuthorSurname()).trim(),
+                        b.getAbout(),
+                        b.getCoverPath(),
+                        b.getYear()
+                ))
+                .toList();
+    }
+
+    private MvcSessionUser getSessionUser(HttpSession session) {
+        Object sessionValue = session.getAttribute(SESSION_USER_KEY);
+        return sessionValue instanceof MvcSessionUser user ? user : null;
     }
 
     private MvcSessionUser requireUser(HttpSession session) {
-        Object sessionValue = session.getAttribute(SESSION_USER_KEY);
-        if (sessionValue instanceof MvcSessionUser user) {
-            return user;
+        MvcSessionUser user = getSessionUser(session);
+        if (user == null) {
+            throw new MvcUnauthorizedException();
         }
-        throw new MvcUnauthorizedException();
+        return user;
     }
 }
