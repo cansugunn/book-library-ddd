@@ -10,6 +10,8 @@ import java.util.List;
 
 public interface SpringDataBookRepository extends JpaRepository<BookJpaEntity, Integer> {
     Page<BookJpaEntity> findAll(Pageable pageable);
+
+    Page<BookJpaEntity> findByTitleContainingIgnoreCase(String title, Pageable pageable);
     @Query(value = "select b.* from books b left join user_book_states u on b.id = u.book_id and u.userinfo_id = :userId where u.id is null", nativeQuery = true)
     List<BookJpaEntity> findBooksWithoutUserBookStateRecords(Integer userId);
 }

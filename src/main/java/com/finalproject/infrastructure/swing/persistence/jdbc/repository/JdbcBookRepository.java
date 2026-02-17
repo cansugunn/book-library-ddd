@@ -202,6 +202,54 @@ public class JdbcBookRepository implements BookRepository {
     }
 
     @Override
+    public PageResult<Book> searchByTitle(String keyword, PageQuery pageQuery) {
+        String contentSql = """
+                SELECT *
+                FROM books
+                WHERE LOWER(title) LIKE ?
+                ORDER BY id
+                LIMIT ? OFFSET ?
+                """;
+        String countSql = "SELECT COUNT(*) FROM books WHERE LOWER(title) LIKE ?";
+
+        Connection connection = databaseConfig.getConnection();
+        try (PreparedStatement contentStatement = connection.prepareStatement(contentSql);
+             PreparedStatement countStatement = connection.prepareStatement(countSql)) {
+
+            String like = "%" + keyword.toLowerCase() + "%";
+            contentStatement.setString(1, like);
+            contentStatement.setInt(2, pageQuery.size());
+            contentStatement.setInt(3, pageQuery.page() * pageQuery.size());
+
+            ResultSet contentResult = contentStatement.executeQuery();
+            List<Book> books = new ArrayList<>();
+            while (contentResult.next()) {
+                books.add(JdbcBookMapper.toBook(contentResult));
+            }
+
+            countStatement.setString(1, like);
+            ResultSet countResult = countStatement.executeQuery();
+            long totalElements = 0;
+            if (countResult.next()) {
+                totalElements = countResult.getLong(1);
+            }
+
+            int totalPages = (int) Math.ceil((double) totalElements / pageQuery.size());
+            return new PageResult<>(
+                    books,
+                    pageQuery.page(),
+                    pageQuery.size(),
+                    totalElements,
+                    totalPages,
+                    pageQuery.page() == 0,
+                    pageQuery.page() + 1 >= Math.max(totalPages, 1)
+            );
+        } catch (SQLException e) {
+            throw new RuntimeException("Error searching books", e);
+        }
+    }
+
+    @Override
     public void delete(BookId bookId) {
         String sql = """
                 DELETE FROM books 

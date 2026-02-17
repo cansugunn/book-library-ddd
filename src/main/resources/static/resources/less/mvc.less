@@ -163,4 +163,39 @@ button { border: none; background:@accent2; color:white; padding: 12px 14px; fon
   .hero { grid-template-columns: 1fr; padding: 24px; }
   .section, .page, .book-hero { padding: 20px; }
   .book-hero { grid-template-columns: 1fr; }
+  .detail-grid { grid-template-columns: 1fr; }
 }
+
+.carousel-viewport { overflow: hidden; }
+.carousel-track {
+  display: flex;
+  gap: 14px;
+  width: max-content;
+  animation: slideCarousel 28s linear infinite;
+}
+.carousel-track:hover { animation-play-state: paused; }
+@keyframes slideCarousel {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-38%); }
+}
+.stats-row {
+  display:flex;
+  gap:14px;
+  margin-top: 16px;
+}
+.stats-row div {
+  background: #fff;
+  border:1px solid @line;
+  border-radius: 12px;
+  padding:8px 12px;
+  min-width: 100px;
+}
+.stats-row span { display:block; color:@muted; font-size:.8rem; }
+.detail-grid {
+  display:grid;
+  grid-template-columns: 1.2fr .8fr;
+  gap:14px;
+}
+.comment-list { padding-left: 18px; }
+.comment-list li { margin: 8px 0; }
+.comment-header { display:flex; justify-content:space-between; align-items:center; }
