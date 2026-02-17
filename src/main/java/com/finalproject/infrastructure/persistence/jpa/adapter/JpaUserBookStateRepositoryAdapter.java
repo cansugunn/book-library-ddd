@@ -4,9 +4,12 @@ import com.finalproject.application.ports.output.repository.UserBookStateReposit
 import com.finalproject.domain.entity.Comment;
 import com.finalproject.domain.entity.UserBookState;
 import com.finalproject.domain.valueobject.*;
+import com.finalproject.infrastructure.persistence.jpa.entity.BookJpaEntity;
 import com.finalproject.infrastructure.persistence.jpa.entity.CommentJpaEntity;
 import com.finalproject.infrastructure.persistence.jpa.entity.UserBookStateJpaEntity;
+import com.finalproject.infrastructure.persistence.jpa.entity.UserJpaEntity;
 import com.finalproject.infrastructure.persistence.jpa.repository.SpringDataUserBookStateRepository;
+import jakarta.persistence.EntityManager;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
@@ -16,24 +19,27 @@ import java.util.Optional;
 @Component
 public class JpaUserBookStateRepositoryAdapter implements UserBookStateRepository {
     private final SpringDataUserBookStateRepository repository;
+    private final EntityManager entityManager;
 
-    public JpaUserBookStateRepositoryAdapter(SpringDataUserBookStateRepository repository) {
+    public JpaUserBookStateRepositoryAdapter(SpringDataUserBookStateRepository repository,
+                                             EntityManager entityManager) {
         this.repository = repository;
+        this.entityManager = entityManager;
     }
 
     @Override
     public Optional<UserBookState> findByBookIdAndUserId(BookId bookId, UserId userId) {
-        return repository.findByBookIdAndUserId(bookId.getValue(), userId.getValue()).map(this::toDomain);
+        return repository.findByBook_IdAndUser_Id(bookId.getValue(), userId.getValue()).map(this::toDomain);
     }
 
     @Override
     public List<UserBookState> findRatedOver(UserId userId, Rating rating) {
-        return repository.findByUserIdAndRatingGreaterThan(userId.getValue(), rating.getValue()).stream().map(this::toDomain).toList();
+        return repository.findByUser_IdAndRatingGreaterThan(userId.getValue(), rating.getValue()).stream().map(this::toDomain).toList();
     }
 
     @Override
     public List<UserBookState> findNotReadYetOf(UserId userId) {
-        return repository.findByUserIdAndReadStatusNot(userId.getValue(), Read.READ.getOrdinaryValue()).stream().map(this::toDomain).toList();
+        return repository.findByUser_IdAndReadStatusNot(userId.getValue(), Read.READ.getOrdinaryValue()).stream().map(this::toDomain).toList();
     }
 
     @Override
@@ -55,7 +61,7 @@ public class JpaUserBookStateRepositoryAdapter implements UserBookStateRepositor
 
     @Override
     public void deleteByBookId(BookId bookId) {
-        repository.deleteByBookId(bookId.getValue());
+        repository.deleteByBook_Id(bookId.getValue());
     }
 
     @Override
@@ -73,8 +79,8 @@ public class JpaUserBookStateRepositoryAdapter implements UserBookStateRepositor
         if (domain.getId() != null) {
             entity.setId(domain.getId().getValue());
         }
-        entity.setUserId(domain.getUserId().getValue());
-        entity.setBookId(domain.getBookId().getValue());
+        entity.setUser(entityManager.getReference(UserJpaEntity.class, domain.getUserId().getValue()));
+        entity.setBook(entityManager.getReference(BookJpaEntity.class, domain.getBookId().getValue()));
         entity.setReadStatus(domain.getRead().getOrdinaryValue());
         entity.setRating(domain.getRating().getValue());
         entity.setReleaseDate(domain.getReleaseDate() == null ? null : domain.getReleaseDate().getDate());
@@ -98,8 +104,8 @@ public class JpaUserBookStateRepositoryAdapter implements UserBookStateRepositor
                 .toList();
         return new UserBookState.Builder()
                 .id(new UserBookStateId(entity.getId()))
-                .userId(new UserId(entity.getUserId()))
-                .bookId(new BookId(entity.getBookId()))
+                .userId(new UserId(entity.getUser().getId()))
+                .bookId(new BookId(entity.getBook().getId()))
                 .read(Read.of(entity.getReadStatus()))
                 .rating(new Rating(entity.getRating()))
                 .releaseDate(entity.getReleaseDate() == null ? null : new ReleaseDate(entity.getReleaseDate()))
