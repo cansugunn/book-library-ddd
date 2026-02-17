@@ -1,10 +1,10 @@
-package com.finalproject.presentation.spring.api.request;
+package com.finalproject.presentation.spring.dto.request;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
-public record UpdateBookRequest(
+public record CreateBookRequest(
         @NotBlank String authorName,
         @NotBlank String authorSurname,
         @NotBlank String title,

@@ -1,4 +1,4 @@
-package com.finalproject.presentation.spring.api.request;
+package com.finalproject.presentation.spring.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
 

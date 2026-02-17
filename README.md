@@ -10,7 +10,7 @@ A library manager built with Domain-Driven Design (DDD) and hexagonal architectu
 
 - **Inbound ports (driving adapters):** Swing views call application services through `application.ports.input.services` interfaces. This keeps UI logic interchangeable while preserving domain rules.
 - **Outbound ports (driven adapters):** Persistence, security, and clock abstractions live under `application.ports.output`. Infrastructure implements them with JDBC repositories, password encryption, and system time utilities, enabling replacement without touching domain code.
-- **Manual composition:** `com.finalproject.presentation.swing.SwingDesktopApplication` bootstraps a Swing-specific `DependencyInjector` that wires adapters into services explicitly, avoiding hidden magic and making dependencies visible for tests.
+- **Manual composition:** `com.finalproject.SwingDesktopApplication` bootstraps a Swing-specific `DependencyInjector` that wires adapters into services explicitly, avoiding hidden magic and making dependencies visible for tests.
 
 ### Layer responsibilities
 
@@ -74,7 +74,7 @@ src/main/java/com/finalproject
 mvn spring-boot:run
 ```
 
-4. Optional: run the original Swing client from your IDE using `com.finalproject.presentation.swing.SwingDesktopApplication`.
+4. Optional: run the original Swing client from your IDE using `com.finalproject.SwingDesktopApplication`.
 
 - Swagger UI: `http://localhost:8080/swagger-ui/index.html`
 - OpenAPI JSON: `http://localhost:8080/v3/api-docs`

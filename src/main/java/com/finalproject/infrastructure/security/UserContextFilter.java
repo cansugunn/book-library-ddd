@@ -1,9 +1,7 @@
-package com.finalproject.presentation.spring.api;
+package com.finalproject.infrastructure.security;
 
 import com.finalproject.infrastructure.configuration.spring.JwtTokenProvider;
 import com.finalproject.domain.valueobject.UserType;
-import com.finalproject.infrastructure.security.UserContext;
-import com.finalproject.infrastructure.security.UserContextHolder;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;

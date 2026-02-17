@@ -1,6 +1,6 @@
 package com.finalproject.infrastructure.configuration.spring;
 
-import com.finalproject.presentation.spring.api.UserContextFilter;
+import com.finalproject.infrastructure.security.UserContextFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;

@@ -1,4 +1,4 @@
-package com.finalproject.presentation.spring.api;
+package com.finalproject.presentation.spring.api.exceptionhandler;
 
 import com.finalproject.domain.exception.BookNotFoundException;
 import com.finalproject.domain.exception.DomainException;

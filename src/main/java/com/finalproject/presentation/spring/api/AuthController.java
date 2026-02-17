@@ -1,10 +1,9 @@
 package com.finalproject.presentation.spring.api;
 
 import com.finalproject.application.dto.FindUserResponse;
-import com.finalproject.application.dto.auth.LoginCommand;
 import com.finalproject.application.ports.input.services.UserApplicationService;
 import com.finalproject.infrastructure.configuration.spring.JwtTokenProvider;
-import com.finalproject.presentation.spring.api.request.LoginRequest;
+import com.finalproject.presentation.spring.dto.request.LoginRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import jakarta.validation.Valid;

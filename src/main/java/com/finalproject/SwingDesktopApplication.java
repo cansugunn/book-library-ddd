@@ -1,4 +1,4 @@
-package com.finalproject.presentation.swing;
+package com.finalproject;
 
 import com.finalproject.presentation.swing.bootstrap.DependencyInjector;
 import com.finalproject.presentation.swing.views.Login;
