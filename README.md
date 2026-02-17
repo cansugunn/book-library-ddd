@@ -2,7 +2,7 @@
 
 ![](images/2.png)
 
-A library manager built with Domain-Driven Design (DDD) and hexagonal architecture principles. It now supports both the original Swing UI and a Spring Boot REST API, while preserving the same application/domain core and JDBC persistence adapters (now backed by in-memory H2 for the Spring profile).
+A library manager built with Domain-Driven Design (DDD) and hexagonal architecture principles. It now supports both the original Swing UI and a Spring Boot REST API, with Spring Data JPA + H2 configured for the Spring runtime profile while preserving the same application/domain core.
 
 ## Architecture Overview
 
@@ -53,7 +53,7 @@ src/main/java/com/finalproject
 
 ## Database & Infrastructure
 
-- **H2 in-memory setup** – Spring runtime now uses H2 (`jdbc:h2:mem:mylibrary`) in MySQL compatibility mode. Schema and seed data are loaded automatically from `src/main/resources/db/h2/schema.sql` and `src/main/resources/db/h2/data.sql`.
+- **H2 + JPA setup** – Spring runtime uses H2 (`jdbc:h2:mem:mylibrary`) and Spring Data JPA. Schema and seed data are loaded automatically from `src/main/resources/db/h2/schema.sql` and `src/main/resources/db/h2/data.sql`.
 - **Connection management** – `DatabaseConfig` is a lightweight singleton that loads the H2 driver, provides connections, and offers a shutdown helper.
 - **Transaction boundary** – `JdbcUnitOfWork` wraps JDBC operations, handling commit/rollback around supplied actions to keep application service workflows consistent.
 
@@ -68,6 +68,9 @@ mvn spring-boot:run
 ```
 
 4. Optional: run the original Swing client from your IDE using `com.finalproject.presentation.Main`.
+
+- Swagger UI: `http://localhost:8080/swagger-ui/index.html`
+- OpenAPI JSON: `http://localhost:8080/v3/api-docs`
 
 ### REST API quick start
 
