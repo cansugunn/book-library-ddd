@@ -1,5 +1,7 @@
 package com.finalproject.infrastructure.swing.persistence.jdbc.repository;
 
+import com.finalproject.application.dto.page.PageQuery;
+import com.finalproject.application.dto.page.PageResult;
 import com.finalproject.application.ports.output.repository.BookRepository;
 import com.finalproject.domain.entity.Book;
 import com.finalproject.domain.valueobject.BookId;
@@ -152,6 +154,50 @@ public class JdbcBookRepository implements BookRepository {
             return bookList;
         } catch (SQLException e) {
             throw new RuntimeException("Error finding book by id", e);
+        }
+    }
+
+    @Override
+    public PageResult<Book> findAll(PageQuery pageQuery) {
+        String contentSql = """
+                SELECT *
+                FROM books
+                ORDER BY id
+                LIMIT ? OFFSET ?
+                """;
+        String countSql = "SELECT COUNT(*) FROM books";
+
+        Connection connection = databaseConfig.getConnection();
+        try (PreparedStatement contentStatement = connection.prepareStatement(contentSql);
+             PreparedStatement countStatement = connection.prepareStatement(countSql)) {
+
+            contentStatement.setInt(1, pageQuery.size());
+            contentStatement.setInt(2, pageQuery.page() * pageQuery.size());
+            ResultSet contentResult = contentStatement.executeQuery();
+
+            List<Book> books = new ArrayList<>();
+            while (contentResult.next()) {
+                books.add(JdbcBookMapper.toBook(contentResult));
+            }
+
+            ResultSet countResult = countStatement.executeQuery();
+            long totalElements = 0;
+            if (countResult.next()) {
+                totalElements = countResult.getLong(1);
+            }
+
+            int totalPages = (int) Math.ceil((double) totalElements / pageQuery.size());
+            return new PageResult<>(
+                    books,
+                    pageQuery.page(),
+                    pageQuery.size(),
+                    totalElements,
+                    totalPages,
+                    pageQuery.page() == 0,
+                    pageQuery.page() + 1 >= Math.max(totalPages, 1)
+            );
+        } catch (SQLException e) {
+            throw new RuntimeException("Error finding books", e);
         }
     }
 

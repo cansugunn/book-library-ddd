@@ -1,10 +1,14 @@
 package com.finalproject.infrastructure.spring.persistence.jpa.adapter;
 
+import com.finalproject.application.dto.page.PageQuery;
+import com.finalproject.application.dto.page.PageResult;
 import com.finalproject.application.ports.output.repository.BookRepository;
 import com.finalproject.domain.entity.Book;
 import com.finalproject.domain.valueobject.*;
 import com.finalproject.infrastructure.spring.persistence.jpa.entity.BookJpaEntity;
 import com.finalproject.infrastructure.spring.persistence.jpa.repository.SpringDataBookRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -46,6 +50,20 @@ public class JpaBookRepositoryAdapter implements BookRepository {
     @Override
     public List<Book> findBooksWithoutUserBookStateRecords(UserId userId) {
         return repository.findBooksWithoutUserBookStateRecords(userId.getValue()).stream().map(this::toDomain).toList();
+    }
+
+    @Override
+    public PageResult<Book> findAll(PageQuery pageQuery) {
+        Page<BookJpaEntity> result = repository.findAll(PageRequest.of(pageQuery.page(), pageQuery.size()));
+        return new PageResult<>(
+                result.getContent().stream().map(this::toDomain).toList(),
+                result.getNumber(),
+                result.getSize(),
+                result.getTotalElements(),
+                result.getTotalPages(),
+                result.isFirst(),
+                result.isLast()
+        );
     }
 
     private BookJpaEntity toEntity(Book book) {

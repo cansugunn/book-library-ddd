@@ -36,7 +36,9 @@ public class UserContextFilter extends OncePerRequestFilter {
         return path.startsWith("/api/auth/login")
                 || path.startsWith("/swagger-ui")
                 || path.startsWith("/v3/api-docs")
-                || path.startsWith("/h2-console");
+                || path.startsWith("/h2-console")
+                || path.startsWith("/mvc")
+                || path.equals("/");
     }
 
     @Override

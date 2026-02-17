@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Library</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; }
+        .topbar { display:flex; justify-content:space-between; padding:12px 18px; background:#1f2937; color:white; }
+        .container { padding: 20px; }
+        a { color: #2563eb; text-decoration: none; }
+        .book { border:1px solid #ddd; border-radius:8px; padding:10px; margin-bottom:10px; }
+        .pager { margin-top: 10px; display:flex; gap:10px; align-items:center; }
+    </style>
+</head>
+<body>
+<div class="topbar">
+    <div><strong>Book Library MVC</strong></div>
+    <div id="topActions"></div>
+</div>
+<div class="container">
+    <h2>Books</h2>
+    <div id="books"></div>
+    <div class="pager">
+        <button id="prev">Previous</button>
+        <span id="page"></span>
+        <button id="next">Next</button>
+    </div>
+</div>
+<script>
+    const auth = JSON.parse(localStorage.getItem('auth') || 'null');
+    let currentPage = Number(new URLSearchParams(location.search).get('page') || 0);
+    let totalPages = 1;
+
+    function renderTopBar() {
+        const top = document.getElementById('topActions');
+        if (!auth) {
+            top.innerHTML = `<a href="/mvc/login.html" style="color:white">Login</a>`;
+            return;
+        }
+        top.innerHTML = `
+          <span>${auth.username} (${auth.userType})</span>
+          &nbsp;|&nbsp;
+          <a href="/mvc/favourites.html" style="color:white">My favourites</a>
+          &nbsp;|&nbsp;
+          <a href="#" id="logout" style="color:white">Logout</a>`;
+        document.getElementById('logout').onclick = () => { localStorage.removeItem('auth'); location.href = '/mvc/index.html'; };
+    }
+
+    async function loadBooks() {
+        const booksEl = document.getElementById('books');
+        booksEl.innerHTML = 'Loading...';
+        const response = await fetch(`/api/books?page=${currentPage}&size=8`, {
+            headers: auth ? { 'Authorization': `Bearer ${auth.token}` } : {}
+        });
+        if (!response.ok) {
+            booksEl.innerHTML = auth ? 'Failed to load books' : 'Please login to view books.';
+            return;
+        }
+        const data = await response.json();
+        totalPages = data.totalPages || 1;
+        booksEl.innerHTML = data.content.map(book => `
+            <div class="book">
+                <a href="/mvc/book.html?bookId=${book.bookId}"><strong>${book.title}</strong></a><br/>
+                <a href="/mvc/user.html?label=author&name=${encodeURIComponent(book.authorName + ' ' + book.authorSurname)}">${book.authorName} ${book.authorSurname}</a>
+            </div>
+        `).join('');
+        document.getElementById('page').innerText = `Page ${data.page + 1} / ${Math.max(totalPages, 1)}`;
+    }
+
+    document.getElementById('prev').onclick = () => { if (currentPage > 0) location.search = `?page=${currentPage - 1}`; };
+    document.getElementById('next').onclick = () => { if (currentPage + 1 < totalPages) location.search = `?page=${currentPage + 1}`; };
+
+    renderTopBar();
+    loadBooks();
+</script>
+</body>
+</html>

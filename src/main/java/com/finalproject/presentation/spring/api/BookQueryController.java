@@ -2,8 +2,12 @@ package com.finalproject.presentation.spring.api;
 
 import com.finalproject.application.dto.FindBookResponse;
 import com.finalproject.application.dto.book.query.GetBookQuery;
+import com.finalproject.application.dto.page.PageQuery;
+import com.finalproject.application.dto.page.PageResult;
 import com.finalproject.application.ports.input.services.BookQueryApplicationService;
 import jakarta.validation.constraints.Min;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,5 +27,10 @@ public class BookQueryController {
     @GetMapping("/{bookId}")
     public FindBookResponse findBook(@PathVariable @Min(1) int bookId) {
         return queryService.findBook(new GetBookQuery(bookId));
+    }
+
+    @GetMapping
+    public PageResult<FindBookResponse> findBooks(@PageableDefault(size = 10) Pageable pageable) {
+        return queryService.findAllBooks(new PageQuery(pageable.getPageNumber(), pageable.getPageSize()));
     }
 }
