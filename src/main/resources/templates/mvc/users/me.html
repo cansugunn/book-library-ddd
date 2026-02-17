@@ -2,29 +2,33 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>User profile</title>
     <link rel="stylesheet/less" type="text/css" href="/resources/less/mvc.less" />
     <script src="https://cdn.jsdelivr.net/npm/less@4"></script>
 </head>
 <body>
-<div class="topbar">
-    <div class="brand">Book Library</div>
-    <div class="actions">
-        <a th:href="@{/mvc/books}">Books</a>
-        <a th:href="@{/mvc/logout}">Logout</a>
-    </div>
-</div>
+<header class="nav-shell compact">
+    <div class="logo">Bookverse</div>
+    <nav class="nav-actions">
+        <a th:href="@{/mvc}">Explore</a>
+        <a th:href="@{/mvc/users/me/comments}">My comments</a>
+        <a th:href="@{/mvc/logout}">Log out</a>
+    </nav>
+</header>
 <div class="page">
     <div class="card">
         <h2 th:text="${user.username}"></h2>
         <p>User type: <strong th:text="${user.userType}"></strong></p>
-        <p><a th:href="@{/mvc/users/me/comments}">My comments</a></p>
-        <h3>My favourites</h3>
-        <ul>
-            <li th:each="fav : ${favourites}">
-                <a th:href="@{/mvc/books/{id}(id=${fav.bookId})}" th:text="${fav.title}"></a>
-            </li>
-        </ul>
+    </div>
+
+    <div class="section-head"><h2>My favourites</h2></div>
+    <div class="carousel">
+        <a class="story-card" th:each="fav : ${favourites}" th:href="@{/mvc/books/{id}(id=${fav.bookId})}">
+            <img th:src="${fav.coverPath}" alt="cover"/>
+            <h3 th:text="${fav.title}"></h3>
+            <p th:text="${fav.authorName + ' ' + fav.authorSurname}"></p>
+        </a>
     </div>
 </div>
 </body>

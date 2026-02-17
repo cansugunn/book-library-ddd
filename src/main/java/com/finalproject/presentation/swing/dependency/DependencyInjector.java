@@ -9,6 +9,7 @@ import com.finalproject.application.ports.input.services.BookCommandApplicationS
 import com.finalproject.application.ports.input.services.BookQueryApplicationService;
 import com.finalproject.application.ports.input.services.UserApplicationService;
 import com.finalproject.application.ports.input.services.UserBookStateApplicationService;
+import com.finalproject.application.ports.output.fms.FileManagementService;
 import com.finalproject.application.ports.output.repository.AuthorRepository;
 import com.finalproject.application.ports.output.repository.BookRepository;
 import com.finalproject.application.ports.output.repository.UnitOfWork;
@@ -27,6 +28,7 @@ import com.finalproject.infrastructure.swing.persistence.jdbc.repository.JdbcBoo
 import com.finalproject.infrastructure.swing.persistence.jdbc.repository.JdbcUnitOfWork;
 import com.finalproject.infrastructure.swing.persistence.jdbc.repository.JdbcUserBookStateRepository;
 import com.finalproject.infrastructure.swing.persistence.jdbc.repository.JdbcUserRepository;
+import com.finalproject.infrastructure.common.fms.LocalFileManagementService;
 import com.finalproject.infrastructure.common.security.CypherPasswordEncryptor;
 import com.finalproject.infrastructure.common.security.ThreadLocalCurrentUser;
 
@@ -45,6 +47,7 @@ public class DependencyInjector {
 
     private final CurrentUser currentUser;
     private final PasswordEncryptor passwordEncryptor;
+    private final FileManagementService fileManagementService;
 
 
     public DependencyInjector() {
@@ -57,6 +60,7 @@ public class DependencyInjector {
 
         currentUser = new ThreadLocalCurrentUser();
         passwordEncryptor = new CypherPasswordEncryptor();
+        fileManagementService = new LocalFileManagementService();
 
         authorApplicationService = new AuthorApplicationServiceImpl(
                 authorRepository,
@@ -71,14 +75,16 @@ public class DependencyInjector {
         bookQueryApplicationService = new BookQueryApplicationServiceImpl(
                 bookRepository,
                 authorRepository,
-                new BookDataMapper());
+                new BookDataMapper(),
+                fileManagementService);
         userBookStateApplicationService = new UserBookStateApplicationServiceImpl(
                 userBookStateRepository,
                 bookRepository,
                 authorRepository,
                 userRepository,
                 new UserBookStateMapper(),
-                currentUser);
+                currentUser,
+                fileManagementService);
         userApplicationService = new UserApplicationServiceImpl(
                 userRepository,
                 new UserDataMapper(),

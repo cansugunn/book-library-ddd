@@ -3,6 +3,7 @@ package com.finalproject.application.services;
 import com.finalproject.application.dto.*;
 import com.finalproject.application.mapper.UserBookStateMapper;
 import com.finalproject.application.ports.input.services.UserBookStateApplicationService;
+import com.finalproject.application.ports.output.fms.FileManagementService;
 import com.finalproject.application.ports.output.repository.AuthorRepository;
 import com.finalproject.application.ports.output.repository.BookRepository;
 import com.finalproject.application.ports.output.repository.UserBookStateRepository;
@@ -25,19 +26,22 @@ public class UserBookStateApplicationServiceImpl implements UserBookStateApplica
     private final AuthorRepository authorRepository;
     private final UserRepository userRepository;
     private final CurrentUser currentUser;
+    private final FileManagementService fileManagementService;
 
     public UserBookStateApplicationServiceImpl(UserBookStateRepository userBookStateRepository,
                                                BookRepository bookRepository,
                                                AuthorRepository authorRepository,
                                                UserRepository userRepository,
                                                UserBookStateMapper userBookStateMapper,
-                                               CurrentUser currentUser) {
+                                               CurrentUser currentUser,
+                                               FileManagementService fileManagementService) {
         this.userBookStateMapper = userBookStateMapper;
         this.userBookStateRepository = userBookStateRepository;
         this.bookRepository = bookRepository;
         this.authorRepository = authorRepository;
         this.userRepository = userRepository;
         this.currentUser = currentUser;
+        this.fileManagementService = fileManagementService;
     }
 
     @Override
@@ -55,8 +59,8 @@ public class UserBookStateApplicationServiceImpl implements UserBookStateApplica
         if (userBookStateOptional.isPresent()) {
             commentList = userBookStateOptional.get().getComments();
         }
-        return userBookStateMapper.toFindUserBookStateResponse(
-                userBookStateOptional, bookOptional.get(), authorOptional.get(), commentList);
+        return withPublicCover(userBookStateMapper.toFindUserBookStateResponse(
+                userBookStateOptional, bookOptional.get(), authorOptional.get(), commentList));
     }
 
     @Override
@@ -68,7 +72,7 @@ public class UserBookStateApplicationServiceImpl implements UserBookStateApplica
                     List<Comment> commentList = userBookState.getComments();
                     return userBookStateMapper.toFindUserBookStateResponse(Optional.of(userBookState), book, author, commentList);
                 })
-                .toList();
+                .toList().stream().map(this::withPublicCover).toList();
     }
 
     @Override
@@ -101,7 +105,7 @@ public class UserBookStateApplicationServiceImpl implements UserBookStateApplica
                 .toList();
         result.addAll(subResult);
 
-        return result;
+        return result.stream().map(this::withPublicCover).toList();
     }
 
     @Override
@@ -117,7 +121,7 @@ public class UserBookStateApplicationServiceImpl implements UserBookStateApplica
                     List<Comment> commentList = userBookState.getComments();
                     return userBookStateMapper.toFindUserBookStateResponse(Optional.of(userBookState), book, author, commentList);
                 })
-                .toList();
+                .toList().stream().map(this::withPublicCover).toList();
     }
 
     @Override
@@ -132,6 +136,25 @@ public class UserBookStateApplicationServiceImpl implements UserBookStateApplica
         userBookState.validate();
         userBookState = userBookStateRepository.save(userBookState);
         return userBookStateMapper.toCreateUserBookStateResponse(userBookState);
+    }
+
+    private FindUserBookStateResponse withPublicCover(FindUserBookStateResponse raw) {
+        return new FindUserBookStateResponse.Builder()
+                .userBookStateId(raw.getUserBookStateId())
+                .authorId(raw.getAuthorId())
+                .authorName(raw.getAuthorName())
+                .authorSurname(raw.getAuthorSurname())
+                .bookId(raw.getBookId())
+                .title(raw.getTitle())
+                .about(raw.getAbout())
+                .year(raw.getYear())
+                .numberOfPages(raw.getNumberOfPages())
+                .coverPath(fileManagementService.toPublicCoverUrl(raw.getCoverPath()))
+                .read(raw.getRead())
+                .rating(raw.getRating())
+                .comments(raw.getComments())
+                .releaseDate(raw.getReleaseDate())
+                .build();
     }
 
     @Override

@@ -2,15 +2,20 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
     <link rel="stylesheet/less" type="text/css" href="/resources/less/mvc.less" />
     <script src="https://cdn.jsdelivr.net/npm/less@4"></script>
 </head>
 <body>
-<div class="topbar"><div class="brand">Book Library</div></div>
+<header class="nav-shell compact">
+    <div class="logo">Bookverse</div>
+    <nav class="nav-actions"><a th:href="@{/mvc}">Explore</a></nav>
+</header>
 <div class="page">
-    <div class="card login-card">
-        <h2>Login</h2>
+    <div class="card login-card modern">
+        <h2>Welcome back</h2>
+        <p class="subtitle">Continue your reading journey</p>
         <p class="error" th:if="${error}" th:text="${error}"></p>
         <form th:action="@{/mvc/login}" method="post">
             <label>Username <input type="text" name="username" required></label>
