@@ -2,14 +2,17 @@ package com.finalproject.bootstrap;
 
 import com.finalproject.application.mapper.AuthorDataMapper;
 import com.finalproject.application.mapper.BookDataMapper;
+import com.finalproject.application.mapper.UserBookStateMapper;
 import com.finalproject.application.mapper.UserDataMapper;
 import com.finalproject.application.ports.input.services.AuthorApplicationService;
 import com.finalproject.application.ports.input.services.BookCommandApplicationService;
 import com.finalproject.application.ports.input.services.BookQueryApplicationService;
 import com.finalproject.application.ports.input.services.UserApplicationService;
+import com.finalproject.application.ports.input.services.UserBookStateApplicationService;
 import com.finalproject.application.ports.output.repository.AuthorRepository;
 import com.finalproject.application.ports.output.repository.BookRepository;
 import com.finalproject.application.ports.output.repository.UnitOfWork;
+import com.finalproject.application.ports.output.repository.UserBookStateRepository;
 import com.finalproject.application.ports.output.repository.UserRepository;
 import com.finalproject.application.ports.output.security.CurrentUser;
 import com.finalproject.application.ports.output.security.PasswordEncryptor;
@@ -17,8 +20,10 @@ import com.finalproject.application.services.AuthorApplicationServiceImpl;
 import com.finalproject.application.services.BookCommandApplicationServiceImpl;
 import com.finalproject.application.services.BookQueryApplicationServiceImpl;
 import com.finalproject.application.services.UserApplicationServiceImpl;
+import com.finalproject.application.services.UserBookStateApplicationServiceImpl;
 import com.finalproject.infrastructure.persistence.jpa.adapter.JpaAuthorRepositoryAdapter;
 import com.finalproject.infrastructure.persistence.jpa.adapter.JpaBookRepositoryAdapter;
+import com.finalproject.infrastructure.persistence.jpa.adapter.JpaUserBookStateRepositoryAdapter;
 import com.finalproject.infrastructure.persistence.jpa.adapter.JpaUserRepositoryAdapter;
 import com.finalproject.infrastructure.persistence.jpa.config.JpaUnitOfWork;
 import com.finalproject.infrastructure.security.CypherPasswordEncryptor;
@@ -41,6 +46,11 @@ public class HexagonalBeansConfig {
 
     @Bean
     public UserRepository userRepository(JpaUserRepositoryAdapter adapter) {
+        return adapter;
+    }
+
+    @Bean
+    public UserBookStateRepository userBookStateRepository(JpaUserBookStateRepositoryAdapter adapter) {
         return adapter;
     }
 
@@ -88,5 +98,19 @@ public class HexagonalBeansConfig {
                                                          CurrentUser currentUser,
                                                          PasswordEncryptor passwordEncryptor) {
         return new UserApplicationServiceImpl(userRepository, new UserDataMapper(), currentUser, passwordEncryptor);
+    }
+
+    @Bean
+    public UserBookStateApplicationService userBookStateApplicationService(UserBookStateRepository userBookStateRepository,
+                                                                           BookRepository bookRepository,
+                                                                           AuthorRepository authorRepository,
+                                                                           UserRepository userRepository,
+                                                                           CurrentUser currentUser) {
+        return new UserBookStateApplicationServiceImpl(userBookStateRepository,
+                bookRepository,
+                authorRepository,
+                userRepository,
+                new UserBookStateMapper(),
+                currentUser);
     }
 }
