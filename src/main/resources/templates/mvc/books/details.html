@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Book details</title>
+    <link rel="stylesheet/less" type="text/css" href="/resources/less/mvc.less" />
+    <script src="https://cdn.jsdelivr.net/npm/less@4"></script>
+</head>
+<body>
+<div class="topbar">
+    <div class="brand">Book Library</div>
+    <div class="actions">
+        <a th:href="@{/mvc/books}">Books</a>
+        <a th:href="@{/mvc/users/me/favourites}">My favourites</a>
+        <a th:href="@{/mvc/logout}">Logout</a>
+    </div>
+</div>
+<div class="page">
+    <div class="card">
+        <h2 th:text="${book.title}"></h2>
+        <p>Author: <a th:href="@{/mvc/users/me}" th:text="${book.authorName + ' ' + book.authorSurname}"></a></p>
+        <p th:text="${book.about}"></p>
+        <h3>Rating and comments</h3>
+        <p>Rating: <span th:text="${bookState.rating}"></span></p>
+        <ul>
+            <li th:each="comment : ${bookState.comments}">
+                <a th:href="@{/mvc/users/me/comments}" th:text="${comment}"></a>
+            </li>
+        </ul>
+    </div>
+</div>
+</body>
+</html>

@@ -38,6 +38,7 @@ public class UserContextFilter extends OncePerRequestFilter {
                 || path.startsWith("/v3/api-docs")
                 || path.startsWith("/h2-console")
                 || path.startsWith("/mvc")
+                || path.startsWith("/resources")
                 || path.equals("/");
     }
 
