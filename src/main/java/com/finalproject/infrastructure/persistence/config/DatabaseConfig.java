@@ -4,25 +4,24 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-//todo
 public class DatabaseConfig {
-    private static final String URL = "jdbc:mysql://localhost:3306/mylibrary";
-    private static final String USER = "root";
-    private static final String PASSWORD = "root";
+    private static final String URL = "jdbc:h2:mem:mylibrary;MODE=MySQL;DATABASE_TO_LOWER=TRUE;DB_CLOSE_DELAY=-1;INIT=RUNSCRIPT FROM 'classpath:db/h2/schema.sql'\\;RUNSCRIPT FROM 'classpath:db/h2/data.sql'";
+    private static final String USER = "sa";
+    private static final String PASSWORD = "";
 
     private static DatabaseConfig instance;
     private Connection connection;
 
     private DatabaseConfig() {
         try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
+            Class.forName("org.h2.Driver");
             this.connection = DriverManager.getConnection(URL, USER, PASSWORD);
         } catch (ClassNotFoundException | SQLException e) {
             throw new RuntimeException("Failed to initialize database connection", e);
         }
     }
 
-    public static DatabaseConfig getInstance() {
+    public static synchronized DatabaseConfig getInstance() {
         if (instance == null) {
             instance = new DatabaseConfig();
         }

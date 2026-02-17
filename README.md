@@ -2,7 +2,7 @@
 
 ![](images/2.png)
 
-A desktop library manager built with Domain-Driven Design (DDD) and hexagonal architecture principles. The Swing UI authenticates users, manages favorites and wishlists, and lets administrators curate the catalog while persisting state to MySQL via JDBC.
+A library manager built with Domain-Driven Design (DDD) and hexagonal architecture principles. It now supports both the original Swing UI and a Spring Boot REST API, while preserving the same application/domain core and JDBC persistence adapters (now backed by in-memory H2 for the Spring profile).
 
 ## Architecture Overview
 
@@ -53,28 +53,54 @@ src/main/java/com/finalproject
 
 ## Database & Infrastructure
 
-- **MySQL setup** – `docker-compose.yaml` starts a local MySQL instance (`mylibrary` DB, `root/root` credentials). Initialization scripts create schemas, tables, and seed data (authors, books, users, and sample user-book states).
-- **Connection management** – `DatabaseConfig` is a lightweight singleton that loads the MySQL driver, provides connections, and offers a shutdown helper.
+- **H2 in-memory setup** – Spring runtime now uses H2 (`jdbc:h2:mem:mylibrary`) in MySQL compatibility mode. Schema and seed data are loaded automatically from `src/main/resources/db/h2/schema.sql` and `src/main/resources/db/h2/data.sql`.
+- **Connection management** – `DatabaseConfig` is a lightweight singleton that loads the H2 driver, provides connections, and offers a shutdown helper.
 - **Transaction boundary** – `JdbcUnitOfWork` wraps JDBC operations, handling commit/rollback around supplied actions to keep application service workflows consistent.
-
-To start MySQL with seed data:
-
-```bash
-cd src/main/java/com/finalproject/infrastructure/database
-docker-compose up -d
-```
 
 ## Running the Application
 
 1. Install Java 17 and Maven.
 2. Build the project: `mvn clean package`.
-3. Run the Swing client (ensure MySQL is up):
+3. Start the Spring Boot API:
 
 ```bash
-java -cp target/se2232-1.0-SNAPSHOT.jar com.finalproject.presentation.Main
+mvn spring-boot:run
 ```
 
-Alternatively, open the project in your IDE and run `com.finalproject.presentation.Main`.
+4. Optional: run the original Swing client from your IDE using `com.finalproject.presentation.Main`.
+
+### REST API quick start
+
+- `POST /api/auth/login`
+  - Body: `{ "username": "admin", "password": "123" }`
+  - Returns authenticated user metadata (`userId`, `username`, `userType`).
+- `GET /api/books/{id}`
+  - Public read endpoint backed by a dedicated query handler (CQRS).
+- `POST /api/books`, `PUT /api/books/{id}`, `DELETE /api/books/{id}`
+  - Implemented via CQRS command handlers in the application layer.
+  - Require caller identity headers because authorization still relies on the existing `CurrentUser` output port:
+    - `X-User-Id`
+    - `X-Username`
+    - `X-User-Type` (`ADMIN` or `USER`)
+
+Example create request:
+
+```bash
+curl -X POST http://localhost:8080/api/books \
+  -H "Content-Type: application/json" \
+  -H "X-User-Id: 1" \
+  -H "X-Username: admin" \
+  -H "X-User-Type: ADMIN" \
+  -d '{
+    "authorName": "Martin",
+    "authorSurname": "Fowler",
+    "title": "Refactoring",
+    "year": 2018,
+    "numberOfPages": 448,
+    "about": "Improving existing code",
+    "coverPath": "src/main/resources/covers/Book1.jpg"
+  }'
+```
 
 ## Development Standards & Practices
 
