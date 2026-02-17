@@ -10,10 +10,7 @@ import com.finalproject.domain.entity.Author;
 import com.finalproject.domain.entity.Book;
 import com.finalproject.domain.exception.BookNotFoundException;
 import com.finalproject.domain.valueobject.BookId;
-import jakarta.validation.Valid;
-import org.springframework.validation.annotation.Validated;
 
-@Validated
 public class BookQueryApplicationServiceImpl implements BookQueryApplicationService {
     private final BookDataMapper bookDataMapper;
     private final BookRepository bookRepository;
@@ -28,7 +25,7 @@ public class BookQueryApplicationServiceImpl implements BookQueryApplicationServ
     }
 
     @Override
-    public FindBookResponse findBook(@Valid GetBookQuery query) {
+    public FindBookResponse findBook(GetBookQuery query) {
         Book book = bookRepository.findById(new BookId(query.bookId()))
                 .orElseThrow(() -> new BookNotFoundException("Book with bookId %d not found!".formatted(query.bookId())));
         Author author = authorRepository.findById(book.getAuthorId()).orElseThrow();

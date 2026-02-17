@@ -71,14 +71,16 @@ mvn spring-boot:run
 
 - Swagger UI: `http://localhost:8080/swagger-ui/index.html`
 - OpenAPI JSON: `http://localhost:8080/v3/api-docs`
+- Use the **Authorize** button in Swagger with `Bearer <your_token>` (token from `/api/auth/login`).
+- Only `/api/auth/login` is open; all other `/api/**` endpoints require JWT authentication.
 
 ### REST API quick start
 
 - `POST /api/auth/login`
   - Body: `{ "username": "admin", "password": "123" }`
-  - Returns authenticated user metadata (`userId`, `username`, `userType`).
+  - Returns authenticated user metadata (`userId`, `username`, `userType`) plus a JWT `token`.
 - `GET /api/books/{id}`
-  - Public read endpoint backed by a dedicated query handler (CQRS).
+  - Protected endpoint (JWT required) backed by a dedicated query handler (CQRS).
 - `POST /api/books`, `PUT /api/books/{id}`, `DELETE /api/books/{id}`
   - Implemented via CQRS command handlers in the application layer.
   - Require caller identity headers because authorization still relies on the existing `CurrentUser` output port:
