@@ -1,7 +1,7 @@
 package com.finalproject.presentation.swing.views;
 
 import com.finalproject.application.dto.FindUserBookStateResponse;
-import com.finalproject.presentation.swing.bootstrap.DependencyInjector;
+import com.finalproject.presentation.swing.dependency.DependencyInjector;
 import com.finalproject.domain.valueobject.Read;
 import com.finalproject.presentation.swing.util.UserBookStateChangeSubscriber;
 

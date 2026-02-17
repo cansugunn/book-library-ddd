@@ -1,10 +1,10 @@
 package com.finalproject.presentation.swing.views;
 
 import com.finalproject.application.dto.FindUserResponse;
-import com.finalproject.presentation.swing.bootstrap.DependencyInjector;
+import com.finalproject.presentation.swing.dependency.DependencyInjector;
 import com.finalproject.domain.exception.DomainException;
-import com.finalproject.infrastructure.security.UserContext;
-import com.finalproject.infrastructure.security.UserContextHolder;
+import com.finalproject.infrastructure.common.security.UserContext;
+import com.finalproject.infrastructure.common.security.UserContextHolder;
 
 import javax.swing.*;
 import java.awt.event.KeyAdapter;
