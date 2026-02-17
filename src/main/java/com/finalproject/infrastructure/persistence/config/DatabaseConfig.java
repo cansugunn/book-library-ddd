@@ -5,7 +5,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class DatabaseConfig {
-    private static final String URL = "jdbc:h2:mem:mylibrary;MODE=MySQL;DATABASE_TO_LOWER=TRUE;DB_CLOSE_DELAY=-1;INIT=RUNSCRIPT FROM 'classpath:db/h2/schema.sql'\\;RUNSCRIPT FROM 'classpath:db/h2/data.sql'";
+    private static final String URL = "jdbc:h2:mem:mylibrary;MODE=MySQL;DATABASE_TO_LOWER=TRUE;DB_CLOSE_DELAY=-1;NON_KEYWORDS=YEAR,VALUE;INIT=RUNSCRIPT FROM 'classpath:db/h2/schema.sql'\\;RUNSCRIPT FROM 'classpath:db/h2/data.sql'";
     private static final String USER = "sa";
     private static final String PASSWORD = "";
 
