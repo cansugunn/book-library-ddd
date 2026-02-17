@@ -2,6 +2,8 @@ package com.finalproject.application.services;
 
 import com.finalproject.application.dto.FindBookResponse;
 import com.finalproject.application.dto.book.query.GetBookQuery;
+import com.finalproject.application.dto.page.PageQuery;
+import com.finalproject.application.dto.page.PageResult;
 import com.finalproject.application.mapper.BookDataMapper;
 import com.finalproject.application.ports.input.services.BookQueryApplicationService;
 import com.finalproject.application.ports.output.repository.AuthorRepository;
@@ -30,5 +32,24 @@ public class BookQueryApplicationServiceImpl implements BookQueryApplicationServ
                 .orElseThrow(() -> new BookNotFoundException("Book with bookId %d not found!".formatted(query.bookId())));
         Author author = authorRepository.findById(book.getAuthorId()).orElseThrow();
         return bookDataMapper.toFindBookResponse(book, author);
+    }
+
+    @Override
+    public PageResult<FindBookResponse> findAllBooks(PageQuery pageQuery) {
+        PageResult<Book> booksPage = bookRepository.findAll(pageQuery);
+        return new PageResult<>(
+                booksPage.content().stream()
+                        .map(book -> {
+                            Author author = authorRepository.findById(book.getAuthorId()).orElseThrow();
+                            return bookDataMapper.toFindBookResponse(book, author);
+                        })
+                        .toList(),
+                booksPage.page(),
+                booksPage.size(),
+                booksPage.totalElements(),
+                booksPage.totalPages(),
+                booksPage.first(),
+                booksPage.last()
+        );
     }
 }

@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><title>My favourites</title></head>
+<body style="font-family:Arial;padding:20px;">
+<a href="/mvc/index.html">← Back to books</a>
+<h2>My favourite books</h2>
+<ul id="list"></ul>
+<script>
+const auth = JSON.parse(localStorage.getItem('auth') || 'null');
+if (!auth) location.href = '/mvc/login.html';
+(async () => {
+  const res = await fetch('/api/user-book-states/favourites', {headers:{'Authorization':`Bearer ${auth.token}`}});
+  if (!res.ok) { list.innerHTML='<li>Failed loading favourites</li>'; return; }
+  const data = await res.json();
+  list.innerHTML = data.map(x => `<li><a href='/mvc/book.html?bookId=${x.bookId}'>${x.title}</a></li>`).join('');
+})();
+</script>
+</body></html>

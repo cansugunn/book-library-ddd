@@ -1,5 +1,7 @@
 package com.finalproject.application.ports.output.repository;
 
+import com.finalproject.application.dto.page.PageQuery;
+import com.finalproject.application.dto.page.PageResult;
 import com.finalproject.domain.entity.Book;
 import com.finalproject.domain.valueobject.BookId;
 import com.finalproject.domain.valueobject.UserBookStateId;
@@ -20,4 +22,6 @@ public interface BookRepository {
     Optional<Book> findById(BookId bookId);
 
     List<Book> findBooksWithoutUserBookStateRecords(UserId userId);
+
+    PageResult<Book> findAll(PageQuery pageQuery);
 }
