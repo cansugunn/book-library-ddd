@@ -24,6 +24,7 @@ public class JwtTokenProvider {
         this.expirationMinutes = expirationMinutes;
     }
 
+    //todo
     public String generateToken(int userId, String username, UserType userType) {
         Instant now = Instant.now();
         return Jwts.builder()

@@ -8,7 +8,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
-public interface SpringDataUserBookStateRepository extends JpaRepository<UserBookStateJpaEntity, Integer> {
+public interface UserBookStateJpaRepository extends JpaRepository<UserBookStateJpaEntity, Integer> {
     Optional<UserBookStateJpaEntity> findByBook_IdAndUser_Id(Integer bookId, Integer userId);
 
     List<UserBookStateJpaEntity> findByUser_IdAndRatingGreaterThan(Integer userId, Integer rating);
@@ -21,7 +21,7 @@ public interface SpringDataUserBookStateRepository extends JpaRepository<UserBoo
               and u.readStatus = :wishStatus
               and u.releaseDate <= :weekDate
             """)
-    List<UserBookStateJpaEntity> findWishToReadInWeek(Integer userId, Integer wishStatus, Date weekDate);
+    List<UserBookStateJpaEntity> findBy(Integer userId, Integer wishStatus, Date weekDate);
 
     void deleteByBook_Id(Integer bookId);
 }

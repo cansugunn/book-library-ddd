@@ -70,7 +70,7 @@ public class BookOperations extends JPanel {
 
         Integer bookId = bookIdOptional.get();
         try {
-            FindBookResponse bookDetails = dependencyInjector.getBookQueryApplicationService().findBook(new GetBookQuery(bookId));
+            FindBookResponse bookDetails = dependencyInjector.getBookQueryApplicationService().find(new GetBookQuery(bookId));
             if (bookDetails != null) {
                 SwingUtilities.invokeLater(() ->
                         new BookEdit(bookDetails, dependencyInjector, userBookStateChangePublisher));

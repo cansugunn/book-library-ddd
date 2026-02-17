@@ -35,7 +35,7 @@ public class MvcBookController {
                               HttpSession session,
                               Model model) {
         MvcSessionUser user = mvcSessionService.get(session);
-        FindBookResponse book = bookQueryApplicationService.findBook(new GetBookQuery(bookId));
+        FindBookResponse book = bookQueryApplicationService.find(new GetBookQuery(bookId));
         FindUserBookStateResponse state = null;
         if (user != null) {
             state = mvcUserContextRunner.runAs(user,

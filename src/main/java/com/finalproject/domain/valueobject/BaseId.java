@@ -29,4 +29,9 @@ public abstract class BaseId<T> {
         BaseId<?> that = (BaseId<?>) obj;
         return value.equals(that.value);
     }
+
+    @Override
+    public String toString() {
+        return String.valueOf(value);
+    }
 }

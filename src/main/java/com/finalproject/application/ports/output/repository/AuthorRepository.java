@@ -26,8 +26,6 @@ public interface AuthorRepository {
 
     boolean hasMoreBooksExcluding(AuthorId authorId, BookId bookId);
 
-    void deleteByNameAndSurname(String name, String surname);
-
     List<Author> findWhichUserHasAtLeastThreeBooksRatedOver(UserId userId, Rating rating);
 
     Optional<Author> findByNameAndSurname(String authorName, String authorSurname);

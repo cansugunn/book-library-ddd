@@ -1,6 +1,9 @@
 package com.finalproject.infrastructure.spring.persistence.jpa.entity;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -8,6 +11,9 @@ import java.util.List;
 
 @Entity
 @Table(name = "user_book_states")
+@Getter
+@Setter
+@NoArgsConstructor
 public class UserBookStateJpaEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,21 +37,10 @@ public class UserBookStateJpaEntity {
     @Column(name = "release_date")
     private Date releaseDate;
 
-    @OneToMany(mappedBy = "userBookState", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
-    private List<CommentJpaEntity> comments = new ArrayList<>();
-
-    public Integer getId() { return id; }
-    public void setId(Integer id) { this.id = id; }
-    public UserJpaEntity getUser() { return user; }
-    public void setUser(UserJpaEntity user) { this.user = user; }
-    public BookJpaEntity getBook() { return book; }
-    public void setBook(BookJpaEntity book) { this.book = book; }
-    public Integer getReadStatus() { return readStatus; }
-    public void setReadStatus(Integer readStatus) { this.readStatus = readStatus; }
-    public Integer getRating() { return rating; }
-    public void setRating(Integer rating) { this.rating = rating; }
-    public Date getReleaseDate() { return releaseDate; }
-    public void setReleaseDate(Date releaseDate) { this.releaseDate = releaseDate; }
-    public List<CommentJpaEntity> getComments() { return comments; }
-    public void setComments(List<CommentJpaEntity> comments) { this.comments = comments; }
+    @OneToMany(
+            mappedBy = "userBookState",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true,
+            fetch = FetchType.LAZY)
+    private List<CommentJpaEntity> comments;
 }

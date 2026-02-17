@@ -42,6 +42,7 @@ public class UserContextFilter extends OncePerRequestFilter {
                 || path.equals("/");
     }
 
+    //todo
     @Override
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,

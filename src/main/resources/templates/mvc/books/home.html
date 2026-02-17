@@ -34,7 +34,7 @@
     <div class="hero-art">
         <div class="wave"></div>
         <div class="bubble" th:each="book : ${trendingBooks}">
-            <img th:src="${book.coverUrl}" alt="cover"/>
+            <img th:src="@{/mvc/media/cover(path=${book.coverUrl()})}" />
             <div>
                 <strong th:text="${book.title}"></strong>
                 <small th:text="${book.author}"></small>
@@ -48,7 +48,7 @@
     <div class="carousel-viewport">
         <div class="carousel-track">
             <a class="story-card" th:each="book : ${trendingBooks}" th:href="@{/mvc/books/{id}(id=${book.id})}">
-                <img th:src="${book.coverUrl}" alt="cover"/>
+                <img th:src="@{/mvc/media/cover(path=${book.coverUrl()})}" alt="cover"/>
                 <h3 th:text="${book.title}"></h3>
                 <p th:text="${book.author}"></p>
             </a>
@@ -63,7 +63,7 @@
     </div>
     <div class="grid-list">
         <a class="list-item" th:each="book : ${bookCards}" th:href="@{/mvc/books/{id}(id=${book.id})}">
-            <img th:src="${book.coverUrl}" alt="cover"/>
+            <img th:src="@{/mvc/media/cover(path=${book.coverUrl()})}" alt="cover"/>
             <div>
                 <h4 th:text="${book.title}"></h4>
                 <p th:text="${book.about}"></p>

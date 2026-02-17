@@ -1,9 +1,15 @@
 package com.finalproject.infrastructure.spring.persistence.jpa.entity;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = "comments")
+@Getter
+@Setter
+@NoArgsConstructor
 public class CommentJpaEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -15,11 +21,4 @@ public class CommentJpaEntity {
 
     @Column(name = "value", nullable = false)
     private String value;
-
-    public Integer getId() { return id; }
-    public void setId(Integer id) { this.id = id; }
-    public UserBookStateJpaEntity getUserBookState() { return userBookState; }
-    public void setUserBookState(UserBookStateJpaEntity userBookState) { this.userBookState = userBookState; }
-    public String getValue() { return value; }
-    public void setValue(String value) { this.value = value; }
 }

@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 
-public interface SpringDataBookRepository extends JpaRepository<BookJpaEntity, Integer> {
+public interface BookJpaRepository extends JpaRepository<BookJpaEntity, Integer> {
     Page<BookJpaEntity> findAll(Pageable pageable);
 
     Page<BookJpaEntity> findByTitleContainingIgnoreCase(String title, Pageable pageable);

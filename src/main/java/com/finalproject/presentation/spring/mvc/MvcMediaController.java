@@ -16,7 +16,6 @@ import java.nio.file.Path;
 @Controller
 @RequestMapping("/mvc/media")
 public class MvcMediaController {
-
     @GetMapping("/cover")
     @ResponseBody
     public ResponseEntity<Resource> mediaCover(@RequestParam("path") String path) {

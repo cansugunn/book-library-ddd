@@ -3,11 +3,9 @@ package com.finalproject.application.services;
 import com.finalproject.application.dto.FindBookResponse;
 import com.finalproject.application.dto.book.query.GetBookQuery;
 import com.finalproject.application.dto.book.query.SearchBooksQuery;
-import com.finalproject.application.dto.page.PageQuery;
 import com.finalproject.application.dto.page.PageResult;
 import com.finalproject.application.mapper.BookDataMapper;
 import com.finalproject.application.ports.input.services.BookQueryApplicationService;
-import com.finalproject.application.ports.output.fms.FileManagementService;
 import com.finalproject.application.ports.output.repository.AuthorRepository;
 import com.finalproject.application.ports.output.repository.BookRepository;
 import com.finalproject.domain.entity.Author;
@@ -15,72 +13,46 @@ import com.finalproject.domain.entity.Book;
 import com.finalproject.domain.exception.BookNotFoundException;
 import com.finalproject.domain.valueobject.BookId;
 
+import java.util.function.Function;
+
 public class BookQueryApplicationServiceImpl implements BookQueryApplicationService {
     private final BookDataMapper bookDataMapper;
     private final BookRepository bookRepository;
     private final AuthorRepository authorRepository;
-    private final FileManagementService fileManagementService;
 
     public BookQueryApplicationServiceImpl(BookRepository bookRepository,
                                            AuthorRepository authorRepository,
-                                           BookDataMapper bookDataMapper,
-                                           FileManagementService fileManagementService) {
+                                           BookDataMapper bookDataMapper) {
         this.bookDataMapper = bookDataMapper;
         this.bookRepository = bookRepository;
         this.authorRepository = authorRepository;
-        this.fileManagementService = fileManagementService;
     }
 
     @Override
-    public FindBookResponse findBook(GetBookQuery query) {
+    public FindBookResponse find(GetBookQuery query) {
         Book book = bookRepository.findById(new BookId(query.bookId()))
-                .orElseThrow(() -> new BookNotFoundException("Book with bookId %d not found!".formatted(query.bookId())));
+                .orElseThrow(() -> new BookNotFoundException("Book with bookId %d not found!"
+                        .formatted(query.bookId())));
         Author author = authorRepository.findById(book.getAuthorId()).orElseThrow();
-        return withPublicCover(bookDataMapper.toFindBookResponse(book, author));
+        return bookDataMapper.toFindBookResponse(book, author);
     }
 
     @Override
-    public PageResult<FindBookResponse> findAllBooks(PageQuery pageQuery) {
-        return map(bookRepository.findAll(pageQuery));
-    }
-
-    @Override
-    public PageResult<FindBookResponse> searchBooks(SearchBooksQuery query) {
-        String keyword = query.keyword() == null ? "" : query.keyword().trim();
-        if (keyword.isBlank()) {
-            return findAllBooks(query.pageQuery());
+    public PageResult<FindBookResponse> findAll(SearchBooksQuery query) {
+        if (query.title() == null) {
+            return bookRepository.findAll(query.pageQuery())
+                    .map(toFindBookResponseFunction());
         }
-        return map(bookRepository.searchByTitle(keyword, query.pageQuery()));
+        return bookRepository.searchByTitle(query.title(), query.pageQuery())
+                .map(toFindBookResponseFunction());
     }
 
-    private PageResult<FindBookResponse> map(PageResult<Book> booksPage) {
-        return new PageResult<>(
-                booksPage.content().stream()
-                        .map(book -> {
-                            Author author = authorRepository.findById(book.getAuthorId()).orElseThrow();
-                            return withPublicCover(bookDataMapper.toFindBookResponse(book, author));
-                        })
-                        .toList(),
-                booksPage.page(),
-                booksPage.size(),
-                booksPage.totalElements(),
-                booksPage.totalPages(),
-                booksPage.first(),
-                booksPage.last()
-        );
-    }
-
-    private FindBookResponse withPublicCover(FindBookResponse raw) {
-        return new FindBookResponse.Builder()
-                .authorId(raw.getAuthorId())
-                .authorName(raw.getAuthorName())
-                .authorSurname(raw.getAuthorSurname())
-                .bookId(raw.getBookId())
-                .title(raw.getTitle())
-                .about(raw.getAbout())
-                .year(raw.getYear())
-                .numberOfPages(raw.getNumberOfPages())
-                .coverPath(fileManagementService.toPublicCoverUrl(raw.getCoverPath()))
-                .build();
+    //todo decouple the mapper
+    private Function<Book, FindBookResponse> toFindBookResponseFunction() {
+        return book -> {
+            //todo n+1 problem
+            Author author = authorRepository.findById(book.getAuthorId()).orElseThrow();
+            return bookDataMapper.toFindBookResponse(book, author);
+        };
     }
 }

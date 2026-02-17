@@ -1,6 +1,10 @@
 package com.finalproject.application.mapper;
 
-import com.finalproject.application.dto.*;
+import com.finalproject.application.dto.CreateBookResponse;
+import com.finalproject.application.dto.FindBookResponse;
+import com.finalproject.application.dto.UpdateBookResponse;
+import com.finalproject.application.dto.book.command.CreateBookCommand;
+import com.finalproject.application.dto.book.command.UpdateBookCommand;
 import com.finalproject.domain.entity.Author;
 import com.finalproject.domain.entity.Book;
 import com.finalproject.domain.valueobject.*;
@@ -8,15 +12,15 @@ import com.finalproject.domain.valueobject.*;
 import java.util.Optional;
 
 public class BookDataMapper {
-    public Book toBook(CreateBookRequest request, Author author) {
+    public Book toBook(CreateBookCommand command, Author author) {
         return new Book(
                 null,
                 author.getId(),
-                request.getTitle(),
-                new Year(request.getYear()),
-                new NumberOfPages(request.getNumberOfPages()),
-                new Cover(request.getCoverPath()),
-                request.getAbout());
+                command.title(),
+                new Year(command.year()),
+                new NumberOfPages(command.numberOfPages()),
+                new Cover(command.coverPath()),
+                command.about());
     }
 
     public CreateBookResponse toCreateBookResponse(Book book, Author author) {
@@ -43,15 +47,15 @@ public class BookDataMapper {
                 .build();
     }
 
-    public Book toBook(UpdateBookRequest request, Author author) {
+    public Book toBook(UpdateBookCommand command, Author author) {
         return new Book(
-                new BookId(request.getBookId()),
+                new BookId(command.bookId()),
                 author.getId(),
-                request.getTitle(),
-                new Year(request.getYear()),
-                new NumberOfPages(request.getNumberOfPages()),
-                new Cover(request.getCoverPath()),
-                request.getAbout());
+                command.title(),
+                new Year(command.year()),
+                new NumberOfPages(command.numberOfPages()),
+                new Cover(command.coverPath()),
+                command.about());
     }
 
     public UpdateBookResponse toUpdateBookResponse(Book book, Author author) {
@@ -103,4 +107,6 @@ public class BookDataMapper {
                 .build();
 
     }
+
+
 }

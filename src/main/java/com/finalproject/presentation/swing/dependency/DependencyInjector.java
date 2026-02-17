@@ -4,33 +4,15 @@ import com.finalproject.application.mapper.AuthorDataMapper;
 import com.finalproject.application.mapper.BookDataMapper;
 import com.finalproject.application.mapper.UserBookStateMapper;
 import com.finalproject.application.mapper.UserDataMapper;
-import com.finalproject.application.ports.input.services.AuthorApplicationService;
-import com.finalproject.application.ports.input.services.BookCommandApplicationService;
-import com.finalproject.application.ports.input.services.BookQueryApplicationService;
-import com.finalproject.application.ports.input.services.UserApplicationService;
-import com.finalproject.application.ports.input.services.UserBookStateApplicationService;
-import com.finalproject.application.ports.output.fms.FileManagementService;
-import com.finalproject.application.ports.output.repository.AuthorRepository;
-import com.finalproject.application.ports.output.repository.BookRepository;
-import com.finalproject.application.ports.output.repository.UnitOfWork;
-import com.finalproject.application.ports.output.repository.UserBookStateRepository;
-import com.finalproject.application.ports.output.repository.UserRepository;
+import com.finalproject.application.ports.input.services.*;
+import com.finalproject.application.ports.output.repository.*;
 import com.finalproject.application.ports.output.security.CurrentUser;
 import com.finalproject.application.ports.output.security.PasswordEncryptor;
-import com.finalproject.application.services.AuthorApplicationServiceImpl;
-import com.finalproject.application.services.BookCommandApplicationServiceImpl;
-import com.finalproject.application.services.BookQueryApplicationServiceImpl;
-import com.finalproject.application.services.UserApplicationServiceImpl;
-import com.finalproject.application.services.UserBookStateApplicationServiceImpl;
-import com.finalproject.infrastructure.swing.persistence.jdbc.config.DatabaseConfig;
-import com.finalproject.infrastructure.swing.persistence.jdbc.repository.JdbcAuthorRepository;
-import com.finalproject.infrastructure.swing.persistence.jdbc.repository.JdbcBookRepository;
-import com.finalproject.infrastructure.swing.persistence.jdbc.repository.JdbcUnitOfWork;
-import com.finalproject.infrastructure.swing.persistence.jdbc.repository.JdbcUserBookStateRepository;
-import com.finalproject.infrastructure.swing.persistence.jdbc.repository.JdbcUserRepository;
-import com.finalproject.infrastructure.common.fms.LocalFileManagementService;
+import com.finalproject.application.services.*;
 import com.finalproject.infrastructure.common.security.CypherPasswordEncryptor;
 import com.finalproject.infrastructure.common.security.ThreadLocalCurrentUser;
+import com.finalproject.infrastructure.swing.persistence.jdbc.config.DatabaseConfig;
+import com.finalproject.infrastructure.swing.persistence.jdbc.repository.*;
 
 public class DependencyInjector {
     private final AuthorRepository authorRepository;
@@ -47,8 +29,6 @@ public class DependencyInjector {
 
     private final CurrentUser currentUser;
     private final PasswordEncryptor passwordEncryptor;
-    private final FileManagementService fileManagementService;
-
 
     public DependencyInjector() {
         DatabaseConfig config = DatabaseConfig.getInstance();
@@ -60,7 +40,6 @@ public class DependencyInjector {
 
         currentUser = new ThreadLocalCurrentUser();
         passwordEncryptor = new CypherPasswordEncryptor();
-        fileManagementService = new LocalFileManagementService();
 
         authorApplicationService = new AuthorApplicationServiceImpl(
                 authorRepository,
@@ -75,16 +54,14 @@ public class DependencyInjector {
         bookQueryApplicationService = new BookQueryApplicationServiceImpl(
                 bookRepository,
                 authorRepository,
-                new BookDataMapper(),
-                fileManagementService);
+                new BookDataMapper());
         userBookStateApplicationService = new UserBookStateApplicationServiceImpl(
                 userBookStateRepository,
                 bookRepository,
                 authorRepository,
                 userRepository,
                 new UserBookStateMapper(),
-                currentUser,
-                fileManagementService);
+                currentUser);
         userApplicationService = new UserApplicationServiceImpl(
                 userRepository,
                 new UserDataMapper(),

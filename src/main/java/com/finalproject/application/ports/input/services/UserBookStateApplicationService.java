@@ -14,5 +14,6 @@ public interface UserBookStateApplicationService {
     List<FindUserBookStateResponse> findWishedBooksToReadThatWillBeDoneIn1WeekOfCurrentUser();
 
     CreateUserBookStateResponse createUserBookForCurrentUser(CreateUserBookStateRequest request);
+
     UpdateUserBookStateResponse updateUserBookForCurrentUser(UpdateUserBookStateRequest request);
 }

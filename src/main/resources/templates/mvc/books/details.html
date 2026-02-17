@@ -18,7 +18,7 @@
 </header>
 
 <section class="book-hero">
-    <img class="book-hero-cover" th:src="${book.coverPath}" alt="cover"/>
+    <img class="book-hero-cover" th:src="@{/mvc/media/cover(path=${book.coverPath})}" alt="cover"/>
     <div class="book-hero-copy">
         <h1 th:text="${book.title}"></h1>
         <p class="meta" th:text="${book.authorName + ' ' + book.authorSurname + ' · ' + book.year + ' · ' + book.numberOfPages + ' páginas'}"></p>

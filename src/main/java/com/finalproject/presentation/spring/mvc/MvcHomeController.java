@@ -32,16 +32,18 @@ public class MvcHomeController {
     }
 
     @GetMapping({"", "/"})
-    public String home(@RequestParam(value = "q", required = false) String keyword,
+    public String home(@RequestParam(required = false) String keyword,
                        @PageableDefault(size = 12) Pageable pageable,
                        HttpSession session,
                        Model model) {
-        PageResult<FindBookResponse> trending = bookQueryApplicationService.findAllBooks(new PageQuery(0, 10));
+        PageResult<FindBookResponse> trending =
+                bookQueryApplicationService.findAll(
+                        new SearchBooksQuery(keyword, new PageQuery(0, 10)));
         int catalogPage = pageable.getPageNumber();
         if ((keyword == null || keyword.isBlank()) && catalogPage == 0) {
             catalogPage = 1;
         }
-        PageResult<FindBookResponse> belowPageRaw = bookQueryApplicationService.searchBooks(
+        PageResult<FindBookResponse> belowPageRaw = bookQueryApplicationService.findAll(
                 new SearchBooksQuery(keyword, new PageQuery(catalogPage, pageable.getPageSize())));
 
         Set<Integer> trendingIds = trending.content().stream().map(FindBookResponse::getBookId).collect(Collectors.toSet());

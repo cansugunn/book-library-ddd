@@ -3,17 +3,13 @@ package com.finalproject.application.services;
 import com.finalproject.application.dto.*;
 import com.finalproject.application.mapper.UserBookStateMapper;
 import com.finalproject.application.ports.input.services.UserBookStateApplicationService;
-import com.finalproject.application.ports.output.fms.FileManagementService;
 import com.finalproject.application.ports.output.repository.AuthorRepository;
 import com.finalproject.application.ports.output.repository.BookRepository;
 import com.finalproject.application.ports.output.repository.UserBookStateRepository;
 import com.finalproject.application.ports.output.repository.UserRepository;
 import com.finalproject.application.ports.output.security.CurrentUser;
 import com.finalproject.domain.entity.*;
-import com.finalproject.domain.exception.BookNotFoundException;
-import com.finalproject.domain.exception.UserBookStateNotFoundException;
-import com.finalproject.domain.exception.UserDomainException;
-import com.finalproject.domain.exception.UserNotFoundException;
+import com.finalproject.domain.exception.*;
 import com.finalproject.domain.valueobject.*;
 
 import java.util.*;
@@ -26,41 +22,43 @@ public class UserBookStateApplicationServiceImpl implements UserBookStateApplica
     private final AuthorRepository authorRepository;
     private final UserRepository userRepository;
     private final CurrentUser currentUser;
-    private final FileManagementService fileManagementService;
 
     public UserBookStateApplicationServiceImpl(UserBookStateRepository userBookStateRepository,
                                                BookRepository bookRepository,
                                                AuthorRepository authorRepository,
                                                UserRepository userRepository,
                                                UserBookStateMapper userBookStateMapper,
-                                               CurrentUser currentUser,
-                                               FileManagementService fileManagementService) {
+                                               CurrentUser currentUser) {
         this.userBookStateMapper = userBookStateMapper;
         this.userBookStateRepository = userBookStateRepository;
         this.bookRepository = bookRepository;
         this.authorRepository = authorRepository;
         this.userRepository = userRepository;
         this.currentUser = currentUser;
-        this.fileManagementService = fileManagementService;
     }
 
     @Override
     public FindUserBookStateResponse findUserBookOfCurrentUser(int bookId) {
         BookId bookIdObjectValue = new BookId(bookId);
-        Optional<Book> bookOptional = bookRepository.findById(bookIdObjectValue);
-        if (bookOptional.isEmpty()) {
-            throw new BookNotFoundException("Book with bookId %d not found!".formatted(bookId));
-        }
-        Optional<Author> authorOptional = authorRepository.findById(bookOptional.get().getAuthorId());
+
+        Book book = bookRepository.findById(bookIdObjectValue)
+                .orElseThrow(() -> new BookNotFoundException("Book with bookId %s not found!"
+                        .formatted(bookIdObjectValue)));
+        Author author = authorRepository.findById(book.getAuthorId())
+                .orElseThrow(() -> new AuthorNotFoundException("author of book with bookId %s not found!"
+                        .formatted(bookIdObjectValue)));
+
         UserId userIdObjectValue = new UserId(currentUser.getId());
         Optional<UserBookState> userBookStateOptional =
                 userBookStateRepository.findByBookIdAndUserId(bookIdObjectValue, userIdObjectValue);
-        List<Comment> commentList = Collections.emptyList();
-        if (userBookStateOptional.isPresent()) {
-            commentList = userBookStateOptional.get().getComments();
-        }
-        return withPublicCover(userBookStateMapper.toFindUserBookStateResponse(
-                userBookStateOptional, bookOptional.get(), authorOptional.get(), commentList));
+        List<Comment> commentList = userBookStateOptional
+                .map(UserBookState::getComments)
+                .orElse(Collections.emptyList());
+
+        return userBookStateMapper.toFindUserBookStateResponse(userBookStateOptional,
+                book,
+                author,
+                commentList);
     }
 
     @Override
@@ -72,7 +70,7 @@ public class UserBookStateApplicationServiceImpl implements UserBookStateApplica
                     List<Comment> commentList = userBookState.getComments();
                     return userBookStateMapper.toFindUserBookStateResponse(Optional.of(userBookState), book, author, commentList);
                 })
-                .toList().stream().map(this::withPublicCover).toList();
+                .toList();
     }
 
     @Override
@@ -105,12 +103,12 @@ public class UserBookStateApplicationServiceImpl implements UserBookStateApplica
                 .toList();
         result.addAll(subResult);
 
-        return result.stream().map(this::withPublicCover).toList();
+        return result;
     }
 
     @Override
     public List<FindUserBookStateResponse> findWishedBooksToReadThatWillBeDoneIn1WeekOfCurrentUser() {
-        if (!UserType.ADMIN.equals(currentUser.getUsertype())) {
+        if (!currentUser.isAdmin()) {
             throw new UserDomainException("You not have permission to this operation!");
         }
 
@@ -121,7 +119,7 @@ public class UserBookStateApplicationServiceImpl implements UserBookStateApplica
                     List<Comment> commentList = userBookState.getComments();
                     return userBookStateMapper.toFindUserBookStateResponse(Optional.of(userBookState), book, author, commentList);
                 })
-                .toList().stream().map(this::withPublicCover).toList();
+                .toList();
     }
 
     @Override
@@ -136,25 +134,6 @@ public class UserBookStateApplicationServiceImpl implements UserBookStateApplica
         userBookState.validate();
         userBookState = userBookStateRepository.save(userBookState);
         return userBookStateMapper.toCreateUserBookStateResponse(userBookState);
-    }
-
-    private FindUserBookStateResponse withPublicCover(FindUserBookStateResponse raw) {
-        return new FindUserBookStateResponse.Builder()
-                .userBookStateId(raw.getUserBookStateId())
-                .authorId(raw.getAuthorId())
-                .authorName(raw.getAuthorName())
-                .authorSurname(raw.getAuthorSurname())
-                .bookId(raw.getBookId())
-                .title(raw.getTitle())
-                .about(raw.getAbout())
-                .year(raw.getYear())
-                .numberOfPages(raw.getNumberOfPages())
-                .coverPath(fileManagementService.toPublicCoverUrl(raw.getCoverPath()))
-                .read(raw.getRead())
-                .rating(raw.getRating())
-                .comments(raw.getComments())
-                .releaseDate(raw.getReleaseDate())
-                .build();
     }
 
     @Override

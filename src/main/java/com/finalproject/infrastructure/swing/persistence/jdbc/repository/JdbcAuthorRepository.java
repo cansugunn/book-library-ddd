@@ -177,25 +177,6 @@ public class JdbcAuthorRepository implements AuthorRepository {
     }
 
     @Override
-    public void deleteByNameAndSurname(String name, String surname) {
-        String sql = """
-                DELETE FROM authors 
-                WHERE name = ? 
-                    AND surname = ?
-                """;
-
-        Connection connection = databaseConfig.getConnection();
-        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
-
-            preparedStatement.setString(1, name);
-            preparedStatement.setString(2, surname);
-            preparedStatement.executeUpdate();
-        } catch (SQLException e) {
-            throw new RuntimeException("Error deleting author", e);
-        }
-    }
-
-    @Override
     public Optional<Author> findById(AuthorId id) {
         String sql = """
                 SELECT * 
