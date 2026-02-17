@@ -23,7 +23,7 @@ public class SecurityConfig {
                 .exceptionHandling(ex -> ex.authenticationEntryPoint((request, response, authException) ->
                         response.sendError(401, "Unauthorized")))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/", "/mvc/**", "/api/auth/login", "/v3/api-docs/**", "/swagger-ui/**", "/h2-console/**").permitAll()
+                        .requestMatchers("/", "/mvc/**", "/resources/**", "/api/auth/login", "/v3/api-docs/**", "/swagger-ui/**", "/h2-console/**").permitAll()
                         .anyRequest().authenticated())
                 .addFilterBefore(userContextFilter, UsernamePasswordAuthenticationFilter.class);
 

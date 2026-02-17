@@ -1,0 +1,41 @@
+@bg: #f4f6f8;
+@primary: #1f2937;
+@accent: #2563eb;
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: @bg;
+}
+
+.topbar {
+  background: @primary;
+  color: white;
+  padding: 12px 20px;
+  display: flex;
+  justify-content: space-between;
+
+  .actions a, .brand, a {
+    color: white;
+    margin-left: 14px;
+    text-decoration: none;
+  }
+}
+
+.page { padding: 20px; }
+.card {
+  background: white;
+  border-radius: 8px;
+  border: 1px solid #d7dde4;
+  padding: 16px;
+  margin-bottom: 12px;
+}
+.book-title { color: @accent; font-size: 1.1rem; font-weight: bold; }
+.pager { display: flex; gap: 10px; align-items: center; }
+.error { color: #b91c1c; }
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-width: 340px;
+}

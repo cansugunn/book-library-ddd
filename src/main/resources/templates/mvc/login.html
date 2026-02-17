@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+    <link rel="stylesheet/less" type="text/css" href="/resources/less/mvc.less" />
+    <script src="https://cdn.jsdelivr.net/npm/less@4"></script>
+</head>
+<body>
+<div class="topbar"><div class="brand">Book Library</div></div>
+<div class="page">
+    <div class="card login-card">
+        <h2>Login</h2>
+        <p class="error" th:if="${error}" th:text="${error}"></p>
+        <form th:action="@{/mvc/login}" method="post">
+            <label>Username <input type="text" name="username" required></label>
+            <label>Password <input type="password" name="password" required></label>
+            <button type="submit">Sign in</button>
+        </form>
+    </div>
+</div>
+</body>
+</html>

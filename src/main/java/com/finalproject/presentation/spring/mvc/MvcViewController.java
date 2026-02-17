@@ -6,8 +6,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class MvcViewController {
 
-    @GetMapping({"/", "/mvc", "/mvc/"})
+    @GetMapping("/")
     public String root() {
-        return "redirect:/mvc/index.html";
+        return "redirect:/mvc";
     }
 }

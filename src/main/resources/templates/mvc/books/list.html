@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Books</title>
+    <link rel="stylesheet/less" type="text/css" href="/resources/less/mvc.less" />
+    <script src="https://cdn.jsdelivr.net/npm/less@4"></script>
+</head>
+<body>
+<div class="topbar">
+    <div class="brand">Book Library</div>
+    <div class="actions">
+        <a th:href="@{/mvc/users/me}"><span th:text="${user.username + ' (' + user.userType + ')'}"></span></a>
+        <a th:href="@{/mvc/users/me/favourites}">My favourites</a>
+        <a th:href="@{/mvc/logout}">Logout</a>
+    </div>
+</div>
+<div class="page">
+    <h2>Books</h2>
+    <div class="book-grid">
+        <div class="card" th:each="book : ${booksPage.content}">
+            <a class="book-title" th:href="@{/mvc/books/{id}(id=${book.bookId})}" th:text="${book.title}"></a>
+            <a th:href="@{/mvc/users/me}" th:text="${book.authorName + ' ' + book.authorSurname}"></a>
+            <p th:text="${book.about}"></p>
+        </div>
+    </div>
+    <div class="pager">
+        <a th:if="${booksPage.page > 0}" th:href="@{/mvc/books(page=${booksPage.page - 1},size=${booksPage.size})}">Previous</a>
+        <span th:text="${'Page ' + (booksPage.page + 1) + ' / ' + (booksPage.totalPages == 0 ? 1 : booksPage.totalPages)}"></span>
+        <a th:if="${booksPage.page + 1 < booksPage.totalPages}" th:href="@{/mvc/books(page=${booksPage.page + 1},size=${booksPage.size})}">Next</a>
+    </div>
+</div>
+</body>
+</html>
