@@ -11,8 +11,8 @@
 <header class="nav-shell compact">
     <div class="logo">Bookverse</div>
     <nav class="nav-actions">
-        <a th:href="@{/mvc}">Explore</a>
-        <a th:href="@{/mvc/login}" th:if="${user == null}">Log in</a>
+        <a th:href="@{/mvc}">Explorar</a>
+        <a th:href="@{/mvc/login}" th:if="${user == null}">Iniciar sesión</a>
         <a th:href="@{/mvc/users/me}" th:if="${user != null}" th:text="${user.username}"></a>
     </nav>
 </header>
@@ -21,25 +21,36 @@
     <img class="book-hero-cover" th:src="${book.coverPath}" alt="cover"/>
     <div class="book-hero-copy">
         <h1 th:text="${book.title}"></h1>
-        <p class="meta" th:text="${book.authorName + ' ' + book.authorSurname + ' · ' + book.year}"></p>
+        <p class="meta" th:text="${book.authorName + ' ' + book.authorSurname + ' · ' + book.year + ' · ' + book.numberOfPages + ' páginas'}"></p>
         <p th:text="${book.about}"></p>
-        <a class="hero-btn" th:href="@{/mvc/users/me/favourites}" th:if="${user != null}">See my favourites</a>
-        <a class="hero-btn" th:href="@{/mvc/login}" th:if="${user == null}">Log in for personalized ratings</a>
+        <div class="stats-row">
+            <div><span>Lecturas</span><strong>120K</strong></div>
+            <div><span>Votos</span><strong th:text="${bookState != null && bookState.rating != null ? (bookState.rating * 2) + 'K' : '—'}"></strong></div>
+            <div><span>Comentarios</span><strong th:text="${bookState != null && bookState.comments != null ? #lists.size(bookState.comments) : 0}"></strong></div>
+        </div>
     </div>
 </section>
 
-<section class="section">
-    <h2>Ratings & comments</h2>
-    <div class="card" th:if="${bookState != null}">
-        <p>My rating: <strong th:text="${bookState.rating}"></strong></p>
-        <ul>
-            <li th:each="comment : ${bookState.comments}">
-                <a th:href="@{/mvc/users/me/comments}" th:text="${comment}"></a>
-            </li>
-        </ul>
+<section class="section detail-grid">
+    <div class="card">
+        <h2>Reseña</h2>
+        <p th:text="${book.about}"></p>
     </div>
-    <div class="card" th:if="${bookState == null}">
-        <p>This section is available for logged users with personal reading state.</p>
+    <div class="card">
+        <h2>Rate & comments</h2>
+        <div th:if="${bookState != null}">
+            <p>Tu calificación: <strong th:text="${bookState.rating != null ? bookState.rating : 'Sin calificar'}"></strong></p>
+            <ul class="comment-list" th:if="${bookState.comments != null && !bookState.comments.isEmpty()}">
+                <li th:each="comment : ${bookState.comments}">
+                    <a th:href="@{/mvc/users/me/comments}" th:text="${comment}"></a>
+                </li>
+            </ul>
+            <p th:if="${bookState.comments == null || bookState.comments.isEmpty()}">Aún no hay comentarios guardados para este libro.</p>
+        </div>
+        <div th:if="${bookState == null}">
+            <p>Inicia sesión para ver y gestionar tu rating/comentarios de lectura.</p>
+            <a class="hero-btn" th:href="@{/mvc/login}">Ir a login</a>
+        </div>
     </div>
 </section>
 </body>

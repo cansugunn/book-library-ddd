@@ -60,6 +60,16 @@ public class JpaBookRepositoryAdapter implements BookRepository {
     @Override
     public PageResult<Book> findAll(PageQuery pageQuery) {
         Page<BookJpaEntity> result = repository.findAll(PageRequest.of(pageQuery.page(), pageQuery.size()));
+        return mapPage(result);
+    }
+
+    @Override
+    public PageResult<Book> searchByTitle(String keyword, PageQuery pageQuery) {
+        Page<BookJpaEntity> result = repository.findByTitleContainingIgnoreCase(keyword, PageRequest.of(pageQuery.page(), pageQuery.size()));
+        return mapPage(result);
+    }
+
+    private PageResult<Book> mapPage(Page<BookJpaEntity> result) {
         return new PageResult<>(
                 result.getContent().stream().map(mapper::toDomain).toList(),
                 result.getNumber(),

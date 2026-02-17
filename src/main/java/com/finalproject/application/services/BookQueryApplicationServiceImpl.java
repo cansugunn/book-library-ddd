@@ -2,6 +2,7 @@ package com.finalproject.application.services;
 
 import com.finalproject.application.dto.FindBookResponse;
 import com.finalproject.application.dto.book.query.GetBookQuery;
+import com.finalproject.application.dto.book.query.SearchBooksQuery;
 import com.finalproject.application.dto.page.PageQuery;
 import com.finalproject.application.dto.page.PageResult;
 import com.finalproject.application.mapper.BookDataMapper;
@@ -40,7 +41,19 @@ public class BookQueryApplicationServiceImpl implements BookQueryApplicationServ
 
     @Override
     public PageResult<FindBookResponse> findAllBooks(PageQuery pageQuery) {
-        PageResult<Book> booksPage = bookRepository.findAll(pageQuery);
+        return map(bookRepository.findAll(pageQuery));
+    }
+
+    @Override
+    public PageResult<FindBookResponse> searchBooks(SearchBooksQuery query) {
+        String keyword = query.keyword() == null ? "" : query.keyword().trim();
+        if (keyword.isBlank()) {
+            return findAllBooks(query.pageQuery());
+        }
+        return map(bookRepository.searchByTitle(keyword, query.pageQuery()));
+    }
+
+    private PageResult<FindBookResponse> map(PageResult<Book> booksPage) {
         return new PageResult<>(
                 booksPage.content().stream()
                         .map(book -> {

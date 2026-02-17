@@ -24,4 +24,6 @@ public interface BookRepository {
     List<Book> findBooksWithoutUserBookStateRecords(UserId userId);
 
     PageResult<Book> findAll(PageQuery pageQuery);
+
+    PageResult<Book> searchByTitle(String keyword, PageQuery pageQuery);
 }

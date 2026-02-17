@@ -4,7 +4,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-@ControllerAdvice(assignableTypes = MvcController.class)
+@ControllerAdvice(basePackageClasses = {MvcHomeController.class, MvcUserController.class, MvcBookController.class})
 public class MvcExceptionHandler {
 
     @ExceptionHandler(MvcUnauthorizedException.class)
