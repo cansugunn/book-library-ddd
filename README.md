@@ -83,19 +83,14 @@ mvn spring-boot:run
   - Protected endpoint (JWT required) backed by a dedicated query handler (CQRS).
 - `POST /api/books`, `PUT /api/books/{id}`, `DELETE /api/books/{id}`
   - Implemented via CQRS command handlers in the application layer.
-  - Require caller identity headers because authorization still relies on the existing `CurrentUser` output port:
-    - `X-User-Id`
-    - `X-Username`
-    - `X-User-Type` (`ADMIN` or `USER`)
+  - Require `Authorization: Bearer <token>` (JWT from `/api/auth/login`).
 
 Example create request:
 
 ```bash
 curl -X POST http://localhost:8080/api/books \
   -H "Content-Type: application/json" \
-  -H "X-User-Id: 1" \
-  -H "X-Username: admin" \
-  -H "X-User-Type: ADMIN" \
+  -H "Authorization: Bearer <JWT_TOKEN>" \
   -d '{
     "authorName": "Martin",
     "authorSurname": "Fowler",
