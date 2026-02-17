@@ -1,7 +1,7 @@
 package com.finalproject.presentation.swing.views;
 
 import com.finalproject.application.dto.FindUserResponse;
-import com.finalproject.presentation.swing.bootstrap.DependencyInjector;
+import com.finalproject.presentation.swing.dependency.DependencyInjector;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;

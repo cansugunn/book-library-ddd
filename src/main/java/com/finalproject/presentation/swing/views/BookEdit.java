@@ -2,7 +2,7 @@ package com.finalproject.presentation.swing.views;
 
 import com.finalproject.application.dto.FindBookResponse;
 import com.finalproject.application.dto.book.command.UpdateBookCommand;
-import com.finalproject.presentation.swing.bootstrap.DependencyInjector;
+import com.finalproject.presentation.swing.dependency.DependencyInjector;
 import com.finalproject.presentation.swing.util.UserBookStateChangePublisher;
 
 import javax.swing.*;

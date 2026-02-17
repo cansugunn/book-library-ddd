@@ -1,0 +1,12 @@
+package com.finalproject.infrastructure.spring.persistence.jpa.repository;
+
+import com.finalproject.infrastructure.spring.persistence.jpa.entity.BookJpaEntity;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+
+import java.util.List;
+
+public interface SpringDataBookRepository extends JpaRepository<BookJpaEntity, Integer> {
+    @Query(value = "select b.* from books b left join user_book_states u on b.id = u.book_id and u.userinfo_id = :userId where u.id is null", nativeQuery = true)
+    List<BookJpaEntity> findBooksWithoutUserBookStateRecords(Integer userId);
+}

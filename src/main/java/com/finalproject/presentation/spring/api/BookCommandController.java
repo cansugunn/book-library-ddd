@@ -6,20 +6,13 @@ import com.finalproject.application.dto.book.command.CreateBookCommand;
 import com.finalproject.application.dto.book.command.DeleteBookCommand;
 import com.finalproject.application.dto.book.command.UpdateBookCommand;
 import com.finalproject.application.ports.input.services.BookCommandApplicationService;
-import com.finalproject.presentation.spring.api.request.CreateBookRequest;
-import com.finalproject.presentation.spring.api.request.UpdateBookRequest;
+import com.finalproject.presentation.spring.api.dto.CreateBookRequest;
+import com.finalproject.presentation.spring.api.dto.UpdateBookRequest;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/books")
