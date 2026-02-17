@@ -2,7 +2,7 @@
 
 ![](images/2.png)
 
-A desktop library manager built with Domain-Driven Design (DDD) and hexagonal architecture principles. The Swing UI authenticates users, manages favorites and wishlists, and lets administrators curate the catalog while persisting state to MySQL via JDBC.
+A library manager built with Domain-Driven Design (DDD) and hexagonal architecture principles. It now supports both the original Swing UI and a Spring Boot REST API, with Spring Data JPA + H2 configured for the Spring runtime profile while preserving the same application/domain core.
 
 ## Architecture Overview
 
@@ -10,12 +10,12 @@ A desktop library manager built with Domain-Driven Design (DDD) and hexagonal ar
 
 - **Inbound ports (driving adapters):** Swing views call application services through `application.ports.input.services` interfaces. This keeps UI logic interchangeable while preserving domain rules.
 - **Outbound ports (driven adapters):** Persistence, security, and clock abstractions live under `application.ports.output`. Infrastructure implements them with JDBC repositories, password encryption, and system time utilities, enabling replacement without touching domain code.
-- **Manual composition:** `com.finalproject.presentation.Main` bootstraps a `DependencyInjector` that wires adapters into services explicitly, avoiding hidden magic and making dependencies visible for tests.
+- **Manual composition:** `com.finalproject.presentation.swing.SwingDesktopApplication` bootstraps a Swing-specific `DependencyInjector` that wires adapters into services explicitly, avoiding hidden magic and making dependencies visible for tests.
 
 ### Layer responsibilities
 
 - **Presentation (Swing UI)** – Screens (Login, FavoriteBooks, FavoriteAuthors, UnreadBooks, WishlistNotification, etc.) gather user intent and delegate to application services without embedding business logic.
-- **Application layer** – Coordinates use cases, permission checks, and transactions. Services such as `BookApplicationService` and `UserApplicationService` orchestrate repositories, mappers, and security ports while enforcing high-level workflows.
+- **Application layer** – Coordinates use cases, permission checks, and transactions. Book use cases are split with CQRS (`BookCommandApplicationService` + `BookQueryApplicationService`) and work alongside `UserApplicationService` and other services to orchestrate repositories, mappers, and security ports while enforcing high-level workflows.
 - **Domain layer** – Aggregates like `Book`, `Author`, `User`, and `UserBookState` encapsulate business rules. Validation methods (`validate()`) protect invariants such as rating ranges, sensible publication years, release date ordering, and mandatory author names. Violations raise domain exceptions to keep rule enforcement close to the model.
 - **Infrastructure layer** – JDBC repositories implement persistence ports; `JdbcUnitOfWork` scopes transactional work; `CypherPasswordEncryptor` fulfills the password hashing/verification port; `CurrentUserHolder` (thread-local) implements the security context port; `DatabaseConfig` centralizes connection lifecycle.
 
@@ -45,36 +45,76 @@ A desktop library manager built with Domain-Driven Design (DDD) and hexagonal ar
 
 ```
 src/main/java/com/finalproject
-├── presentation            # Swing entry point and views (inbound adapters)
-├── application             # DTOs, mappers, service interfaces/implementations (use cases)
-├── domain                  # Entities, value objects, domain exceptions (core model)
-└── infrastructure          # JDBC repositories, security, database setup (driven adapters)
+├── presentation
+│   ├── spring             # Spring API starter + REST controllers (inbound adapters)
+│   └── swing              # Swing starter, views, and swing bootstrap wiring
+├── application            # Use cases, ports, mappers, and application DTOs
+├── domain                 # Entities, value objects, domain exceptions (core model)
+└── infrastructure
+    ├── configuration      # Spring security/openapi/bean configuration
+    ├── persistence
+    │   ├── jdbc           # JDBC adapters for Swing runtime
+    │   └── jpa            # JPA adapters/entities/repositories for Spring runtime
+    └── security           # Shared security helpers/context
 ```
 
 ## Database & Infrastructure
 
-- **MySQL setup** – `docker-compose.yaml` starts a local MySQL instance (`mylibrary` DB, `root/root` credentials). Initialization scripts create schemas, tables, and seed data (authors, books, users, and sample user-book states).
-- **Connection management** – `DatabaseConfig` is a lightweight singleton that loads the MySQL driver, provides connections, and offers a shutdown helper.
+- **H2 + JPA setup** – Spring runtime uses H2 (`jdbc:h2:mem:mylibrary`) and Spring Data JPA. Schema and seed data are loaded automatically from `src/main/resources/db/h2/schema.sql` and `src/main/resources/db/h2/data.sql`.
+- **Connection management** – `DatabaseConfig` is a lightweight singleton that loads the H2 driver, provides connections, and offers a shutdown helper.
 - **Transaction boundary** – `JdbcUnitOfWork` wraps JDBC operations, handling commit/rollback around supplied actions to keep application service workflows consistent.
-
-To start MySQL with seed data:
-
-```bash
-cd src/main/java/com/finalproject/infrastructure/database
-docker-compose up -d
-```
 
 ## Running the Application
 
 1. Install Java 17 and Maven.
 2. Build the project: `mvn clean package`.
-3. Run the Swing client (ensure MySQL is up):
+3. Start the Spring Boot API:
 
 ```bash
-java -cp target/se2232-1.0-SNAPSHOT.jar com.finalproject.presentation.Main
+mvn spring-boot:run
 ```
 
-Alternatively, open the project in your IDE and run `com.finalproject.presentation.Main`.
+4. Optional: run the original Swing client from your IDE using `com.finalproject.presentation.swing.SwingDesktopApplication`.
+
+Swing JDBC runtime is decoupled from Spring JPA runtime. For Swing, you can point JDBC to MySQL using environment variables:
+- `SWING_DB_DRIVER` (default `com.mysql.cj.jdbc.Driver`)
+- `SWING_DB_URL` (default `jdbc:mysql://localhost:3306/booklibrary`)
+- `SWING_DB_USER` (default `root`)
+- `SWING_DB_PASSWORD` (default `password`)
+If the MySQL driver is not present, Swing falls back to embedded H2 scripts for local execution.
+
+- Swagger UI: `http://localhost:8080/swagger-ui/index.html`
+- OpenAPI JSON: `http://localhost:8080/v3/api-docs`
+- Use the **Authorize** button in Swagger with `Bearer <your_token>` (token from `/api/auth/login`).
+- Only `/api/auth/login` is open; all other `/api/**` endpoints require JWT authentication.
+
+### REST API quick start
+
+- `POST /api/auth/login`
+  - Body: `{ "username": "admin", "password": "123" }`
+  - Returns authenticated user metadata (`userId`, `username`, `userType`) plus a JWT `token`.
+- `GET /api/books/{id}`
+  - Protected endpoint (JWT required) backed by a dedicated query handler (CQRS).
+- `POST /api/books`, `PUT /api/books/{id}`, `DELETE /api/books/{id}`
+  - Implemented via CQRS command handlers in the application layer.
+  - Require `Authorization: Bearer <token>` (JWT from `/api/auth/login`).
+
+Example create request:
+
+```bash
+curl -X POST http://localhost:8080/api/books \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer <JWT_TOKEN>" \
+  -d '{
+    "authorName": "Martin",
+    "authorSurname": "Fowler",
+    "title": "Refactoring",
+    "year": 2018,
+    "numberOfPages": 448,
+    "about": "Improving existing code",
+    "coverPath": "src/main/resources/covers/Book1.jpg"
+  }'
+```
 
 ## Development Standards & Practices
 
