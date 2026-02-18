@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 import java.util.Optional;
 
-public interface SpringDataAuthorRepository extends JpaRepository<AuthorJpaEntity, Integer> {
+public interface JpaAuthorRepository extends JpaRepository<AuthorJpaEntity, Integer> {
     boolean existsByNameAndSurname(String name, String surname);
 
     List<AuthorJpaEntity> findByNameIgnoreCase(String name);
@@ -16,12 +16,24 @@ public interface SpringDataAuthorRepository extends JpaRepository<AuthorJpaEntit
 
     void deleteByNameAndSurname(String name, String surname);
 
-    @Query(value = "select a.* from authors a join books b on b.author_id = a.id where b.id = :bookId", nativeQuery = true)
+    @Query("""
+            select a from AuthorJpaEntity a
+            where exists (
+                select 1 from BookJpaEntity b
+                where b.author.id = a.id and b.id = :bookId
+            )
+            """)
     Optional<AuthorJpaEntity> findByBookId(Integer bookId);
 
-    @Query(value = "select count(*) > 0 from books where author_id = :authorId", nativeQuery = true)
+    @Query("""
+            select (count(b) > 0) from BookJpaEntity b
+            where b.author.id = :authorId
+            """)
     boolean hasMoreBooks(Integer authorId);
 
-    @Query(value = "select count(*) > 0 from books where author_id = :authorId and id <> :bookId", nativeQuery = true)
+    @Query("""
+            select (count(b) > 0) from BookJpaEntity b
+            where b.author.id = :authorId and b.id <> :bookId
+            """)
     boolean hasMoreBooksExcluding(Integer authorId, Integer bookId);
 }

@@ -8,7 +8,7 @@ import com.finalproject.infrastructure.spring.persistence.jpa.entity.BookJpaEnti
 import com.finalproject.infrastructure.spring.persistence.jpa.entity.CommentJpaEntity;
 import com.finalproject.infrastructure.spring.persistence.jpa.entity.UserBookStateJpaEntity;
 import com.finalproject.infrastructure.spring.persistence.jpa.entity.UserJpaEntity;
-import com.finalproject.infrastructure.spring.persistence.jpa.repository.SpringDataUserBookStateRepository;
+import com.finalproject.infrastructure.spring.persistence.jpa.repository.JpaUserBookStateRepository;
 import jakarta.persistence.EntityManager;
 import org.springframework.stereotype.Component;
 
@@ -18,10 +18,10 @@ import java.util.Optional;
 
 @Component
 public class JpaUserBookStateRepositoryAdapter implements UserBookStateRepository {
-    private final SpringDataUserBookStateRepository repository;
+    private final JpaUserBookStateRepository repository;
     private final EntityManager entityManager;
 
-    public JpaUserBookStateRepositoryAdapter(SpringDataUserBookStateRepository repository,
+    public JpaUserBookStateRepositoryAdapter(JpaUserBookStateRepository repository,
                                              EntityManager entityManager) {
         this.repository = repository;
         this.entityManager = entityManager;

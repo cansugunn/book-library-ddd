@@ -9,7 +9,7 @@ import com.finalproject.application.ports.input.services.BookCommandApplicationS
 import com.finalproject.application.ports.input.services.BookQueryApplicationService;
 import com.finalproject.application.ports.input.services.UserApplicationService;
 import com.finalproject.application.ports.input.services.UserBookStateApplicationService;
-import com.finalproject.application.ports.output.fms.FileManagementService;
+import com.finalproject.application.ports.output.fms.FileStoragePort;
 import com.finalproject.application.ports.output.repository.AuthorRepository;
 import com.finalproject.application.ports.output.repository.BookRepository;
 import com.finalproject.application.ports.output.repository.UnitOfWork;
@@ -22,15 +22,17 @@ import com.finalproject.application.services.BookCommandApplicationServiceImpl;
 import com.finalproject.application.services.BookQueryApplicationServiceImpl;
 import com.finalproject.application.services.UserApplicationServiceImpl;
 import com.finalproject.application.services.UserBookStateApplicationServiceImpl;
+import com.finalproject.infrastructure.common.fms.FileStoragePortDecorator;
+import com.finalproject.infrastructure.common.fms.LocalFileStorageAdapter;
+import com.finalproject.infrastructure.common.fms.SwingFileUrlResolver;
+import com.finalproject.infrastructure.common.security.CypherPasswordEncryptor;
+import com.finalproject.infrastructure.common.security.ThreadLocalCurrentUser;
 import com.finalproject.infrastructure.swing.persistence.jdbc.config.DatabaseConfig;
 import com.finalproject.infrastructure.swing.persistence.jdbc.repository.JdbcAuthorRepository;
 import com.finalproject.infrastructure.swing.persistence.jdbc.repository.JdbcBookRepository;
 import com.finalproject.infrastructure.swing.persistence.jdbc.repository.JdbcUnitOfWork;
 import com.finalproject.infrastructure.swing.persistence.jdbc.repository.JdbcUserBookStateRepository;
 import com.finalproject.infrastructure.swing.persistence.jdbc.repository.JdbcUserRepository;
-import com.finalproject.infrastructure.common.fms.LocalFileManagementService;
-import com.finalproject.infrastructure.common.security.CypherPasswordEncryptor;
-import com.finalproject.infrastructure.common.security.ThreadLocalCurrentUser;
 
 public class DependencyInjector {
     private final AuthorRepository authorRepository;
@@ -47,7 +49,7 @@ public class DependencyInjector {
 
     private final CurrentUser currentUser;
     private final PasswordEncryptor passwordEncryptor;
-    private final FileManagementService fileManagementService;
+    private final FileStoragePort fileStoragePort;
 
 
     public DependencyInjector() {
@@ -60,7 +62,7 @@ public class DependencyInjector {
 
         currentUser = new ThreadLocalCurrentUser();
         passwordEncryptor = new CypherPasswordEncryptor();
-        fileManagementService = new LocalFileManagementService();
+        fileStoragePort = new FileStoragePortDecorator(new LocalFileStorageAdapter(), new SwingFileUrlResolver());
 
         authorApplicationService = new AuthorApplicationServiceImpl(
                 authorRepository,
@@ -76,7 +78,7 @@ public class DependencyInjector {
                 bookRepository,
                 authorRepository,
                 new BookDataMapper(),
-                fileManagementService);
+                fileStoragePort);
         userBookStateApplicationService = new UserBookStateApplicationServiceImpl(
                 userBookStateRepository,
                 bookRepository,
@@ -84,7 +86,7 @@ public class DependencyInjector {
                 userRepository,
                 new UserBookStateMapper(),
                 currentUser,
-                fileManagementService);
+                fileStoragePort);
         userApplicationService = new UserApplicationServiceImpl(
                 userRepository,
                 new UserDataMapper(),

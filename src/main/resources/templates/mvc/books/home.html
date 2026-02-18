@@ -1,13 +1,8 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bookverse</title>
-    <link rel="stylesheet/less" type="text/css" href="/resources/less/mvc.less" />
-    <script src="https://cdn.jsdelivr.net/npm/less@4"></script>
-</head>
+<head th:replace="~{mvc/fragments/layout :: head('Bookverse Home')}"></head>
 <body>
+<div class="main-shell">
 <header class="nav-shell">
     <div class="logo">Bookverse</div>
     <form class="search" method="get" th:action="@{/mvc}">
@@ -28,6 +23,10 @@
     <div class="hero-copy">
         <h1>Ven por la historia. Quédate por la conexión.</h1>
         <p>Explora historias modernas con carrusel en vivo y catálogo paginado. Los visitantes pueden navegar libremente, el perfil desbloquea favoritos y comentarios.</p>
+        <div class="kpi-row">
+            <div class="kpi"><small>Trending</small><strong th:text="${#lists.size(trendingBooks)}"></strong></div>
+            <div class="kpi"><small>Catálogo visible</small><strong th:text="${#lists.size(bookCards)}"></strong></div>
+        </div>
         <a class="hero-btn" th:href="@{/mvc/login}" th:if="${user == null}">Comenzar</a>
         <a class="hero-btn" th:href="@{/mvc/users/me/favourites}" th:if="${user != null}">Mis favoritos</a>
     </div>
@@ -76,5 +75,8 @@
         <a th:if="${booksPage.page + 1 < booksPage.totalPages}" th:href="@{/mvc(page=${booksPage.page + 1},size=${booksPage.size},q=${keyword})}">Siguiente</a>
     </div>
 </section>
+
+<footer th:replace="~{mvc/fragments/layout :: footer}"></footer>
+</div>
 </body>
 </html>

@@ -3,13 +3,14 @@ package com.finalproject.application.services;
 import com.finalproject.application.dto.*;
 import com.finalproject.application.mapper.UserBookStateMapper;
 import com.finalproject.application.ports.input.services.UserBookStateApplicationService;
-import com.finalproject.application.ports.output.fms.FileManagementService;
+import com.finalproject.application.ports.output.fms.FileStoragePort;
 import com.finalproject.application.ports.output.repository.AuthorRepository;
 import com.finalproject.application.ports.output.repository.BookRepository;
 import com.finalproject.application.ports.output.repository.UserBookStateRepository;
 import com.finalproject.application.ports.output.repository.UserRepository;
 import com.finalproject.application.ports.output.security.CurrentUser;
 import com.finalproject.domain.entity.*;
+import com.finalproject.domain.exception.AuthorNotFoundException;
 import com.finalproject.domain.exception.BookNotFoundException;
 import com.finalproject.domain.exception.UserBookStateNotFoundException;
 import com.finalproject.domain.exception.UserDomainException;
@@ -26,7 +27,7 @@ public class UserBookStateApplicationServiceImpl implements UserBookStateApplica
     private final AuthorRepository authorRepository;
     private final UserRepository userRepository;
     private final CurrentUser currentUser;
-    private final FileManagementService fileManagementService;
+    private final FileStoragePort fileStoragePort;
 
     public UserBookStateApplicationServiceImpl(UserBookStateRepository userBookStateRepository,
                                                BookRepository bookRepository,
@@ -34,45 +35,42 @@ public class UserBookStateApplicationServiceImpl implements UserBookStateApplica
                                                UserRepository userRepository,
                                                UserBookStateMapper userBookStateMapper,
                                                CurrentUser currentUser,
-                                               FileManagementService fileManagementService) {
+                                               FileStoragePort fileStoragePort) {
         this.userBookStateMapper = userBookStateMapper;
         this.userBookStateRepository = userBookStateRepository;
         this.bookRepository = bookRepository;
         this.authorRepository = authorRepository;
         this.userRepository = userRepository;
         this.currentUser = currentUser;
-        this.fileManagementService = fileManagementService;
+        this.fileStoragePort = fileStoragePort;
     }
 
     @Override
     public FindUserBookStateResponse findUserBookOfCurrentUser(int bookId) {
         BookId bookIdObjectValue = new BookId(bookId);
-        Optional<Book> bookOptional = bookRepository.findById(bookIdObjectValue);
-        if (bookOptional.isEmpty()) {
-            throw new BookNotFoundException("Book with bookId %d not found!".formatted(bookId));
-        }
-        Optional<Author> authorOptional = authorRepository.findById(bookOptional.get().getAuthorId());
+        Book book = bookRepository.findById(bookIdObjectValue)
+                .orElseThrow(() -> new BookNotFoundException("Book with bookId %d not found!".formatted(bookId)));
+
+        Author author = authorRepository.findById(book.getAuthorId())
+                .orElseThrow(() -> new AuthorNotFoundException("Author for book %d not found!".formatted(bookId)));
+
         UserId userIdObjectValue = new UserId(currentUser.getId());
         Optional<UserBookState> userBookStateOptional =
                 userBookStateRepository.findByBookIdAndUserId(bookIdObjectValue, userIdObjectValue);
-        List<Comment> commentList = Collections.emptyList();
-        if (userBookStateOptional.isPresent()) {
-            commentList = userBookStateOptional.get().getComments();
-        }
+
+        List<Comment> commentList = userBookStateOptional.map(UserBookState::getComments).orElse(Collections.emptyList());
+
         return withPublicCover(userBookStateMapper.toFindUserBookStateResponse(
-                userBookStateOptional, bookOptional.get(), authorOptional.get(), commentList));
+                userBookStateOptional, book, author, commentList));
     }
 
     @Override
     public List<FindUserBookStateResponse> findFavouriteBooksOfCurrentUser() {
         return userBookStateRepository.findRatedOver(new UserId(currentUser.getId()), new Rating(3)).stream()
-                .map(userBookState -> {
-                    Book book = bookRepository.findById(userBookState.getBookId()).orElse(null);
-                    Author author = authorRepository.findById(book.getAuthorId()).orElse(null);
-                    List<Comment> commentList = userBookState.getComments();
-                    return userBookStateMapper.toFindUserBookStateResponse(Optional.of(userBookState), book, author, commentList);
-                })
-                .toList().stream().map(this::withPublicCover).toList();
+                .map(this::mapStateToResponse)
+                .flatMap(Optional::stream)
+                .map(this::withPublicCover)
+                .toList();
     }
 
     @Override
@@ -83,25 +81,19 @@ public class UserBookStateApplicationServiceImpl implements UserBookStateApplica
         List<FindUserBookStateResponse> subResult =
                 bookRepository.findBooksWithoutUserBookStateRecords(userIdValueObject)
                         .stream()
-                        .map(book -> {
-                            Author author = authorRepository.findById(book.getAuthorId()).orElse(null);
-                            return userBookStateMapper.toFindUserBookStateResponse(
-                                    Optional.empty(),
-                                    book,
-                                    author,
-                                    Collections.emptyList());
-
-                        }).toList();
+                        .map(book -> authorRepository.findById(book.getAuthorId())
+                                .map(author -> userBookStateMapper.toFindUserBookStateResponse(
+                                        Optional.empty(),
+                                        book,
+                                        author,
+                                        Collections.emptyList())))
+                        .flatMap(Optional::stream)
+                        .toList();
         result.addAll(subResult);
 
-
         subResult = userBookStateRepository.findNotReadYetOf(userIdValueObject).stream()
-                .map(userBookState -> {
-                    Book book = bookRepository.findById(userBookState.getBookId()).orElse(null);
-                    Author author = authorRepository.findById(book.getAuthorId()).orElse(null);
-                    List<Comment> commentList = userBookState.getComments();
-                    return userBookStateMapper.toFindUserBookStateResponse(Optional.of(userBookState), book, author, commentList);
-                })
+                .map(this::mapStateToResponse)
+                .flatMap(Optional::stream)
                 .toList();
         result.addAll(subResult);
 
@@ -115,13 +107,10 @@ public class UserBookStateApplicationServiceImpl implements UserBookStateApplica
         }
 
         return userBookStateRepository.findToBeReadIn1Week(new UserId(currentUser.getId())).stream()
-                .map(userBookState -> {
-                    Book book = bookRepository.findById(userBookState.getBookId()).orElse(null);
-                    Author author = authorRepository.findById(book.getAuthorId()).orElse(null);
-                    List<Comment> commentList = userBookState.getComments();
-                    return userBookStateMapper.toFindUserBookStateResponse(Optional.of(userBookState), book, author, commentList);
-                })
-                .toList().stream().map(this::withPublicCover).toList();
+                .map(this::mapStateToResponse)
+                .flatMap(Optional::stream)
+                .map(this::withPublicCover)
+                .toList();
     }
 
     @Override
@@ -138,6 +127,16 @@ public class UserBookStateApplicationServiceImpl implements UserBookStateApplica
         return userBookStateMapper.toCreateUserBookStateResponse(userBookState);
     }
 
+    private Optional<FindUserBookStateResponse> mapStateToResponse(UserBookState userBookState) {
+        return bookRepository.findById(userBookState.getBookId())
+                .flatMap(book -> authorRepository.findById(book.getAuthorId())
+                        .map(author -> userBookStateMapper.toFindUserBookStateResponse(
+                                Optional.of(userBookState),
+                                book,
+                                author,
+                                userBookState.getComments())));
+    }
+
     private FindUserBookStateResponse withPublicCover(FindUserBookStateResponse raw) {
         return new FindUserBookStateResponse.Builder()
                 .userBookStateId(raw.getUserBookStateId())
@@ -149,7 +148,7 @@ public class UserBookStateApplicationServiceImpl implements UserBookStateApplica
                 .about(raw.getAbout())
                 .year(raw.getYear())
                 .numberOfPages(raw.getNumberOfPages())
-                .coverPath(fileManagementService.toPublicCoverUrl(raw.getCoverPath()))
+                .coverPath(fileStoragePort.resolvePublicUrl(raw.getCoverPath()))
                 .read(raw.getRead())
                 .rating(raw.getRating())
                 .comments(raw.getComments())

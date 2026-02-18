@@ -8,10 +8,16 @@ import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 
-public interface SpringDataBookRepository extends JpaRepository<BookJpaEntity, Integer> {
+public interface JpaBookRepository extends JpaRepository<BookJpaEntity, Integer> {
     Page<BookJpaEntity> findAll(Pageable pageable);
 
     Page<BookJpaEntity> findByTitleContainingIgnoreCase(String title, Pageable pageable);
-    @Query(value = "select b.* from books b left join user_book_states u on b.id = u.book_id and u.userinfo_id = :userId where u.id is null", nativeQuery = true)
+    @Query("""
+            select b from BookJpaEntity b
+            where not exists (
+                select 1 from UserBookStateJpaEntity u
+                where u.book.id = b.id and u.user.id = :userId
+            )
+            """)
     List<BookJpaEntity> findBooksWithoutUserBookStateRecords(Integer userId);
 }

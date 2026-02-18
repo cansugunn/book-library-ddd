@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="head(title)">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${title}">Bookverse</title>
+    <link rel="stylesheet/less" type="text/css" href="/resources/less/mvc.less" />
+    <script src="https://cdn.jsdelivr.net/npm/less@4"></script>
+</head>
+<body>
+<footer th:fragment="footer" class="footer">
+    <span>Bookverse · Discover stories with clarity</span>
+    <span>Hexagonal Architecture Demo</span>
+</footer>
+</body>
+</html>

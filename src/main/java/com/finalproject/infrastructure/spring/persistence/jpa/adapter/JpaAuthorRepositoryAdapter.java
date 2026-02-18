@@ -4,7 +4,7 @@ import com.finalproject.application.ports.output.repository.AuthorRepository;
 import com.finalproject.domain.entity.Author;
 import com.finalproject.domain.valueobject.*;
 import com.finalproject.infrastructure.spring.persistence.jpa.entity.AuthorJpaEntity;
-import com.finalproject.infrastructure.spring.persistence.jpa.repository.SpringDataAuthorRepository;
+import com.finalproject.infrastructure.spring.persistence.jpa.repository.JpaAuthorRepository;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -12,9 +12,9 @@ import java.util.Optional;
 
 @Component
 public class JpaAuthorRepositoryAdapter implements AuthorRepository {
-    private final SpringDataAuthorRepository repository;
+    private final JpaAuthorRepository repository;
 
-    public JpaAuthorRepositoryAdapter(SpringDataAuthorRepository repository) {
+    public JpaAuthorRepositoryAdapter(JpaAuthorRepository repository) {
         this.repository = repository;
     }
 

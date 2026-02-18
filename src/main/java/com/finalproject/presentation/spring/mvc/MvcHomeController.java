@@ -5,7 +5,7 @@ import com.finalproject.application.dto.book.query.SearchBooksQuery;
 import com.finalproject.application.dto.page.PageQuery;
 import com.finalproject.application.dto.page.PageResult;
 import com.finalproject.application.ports.input.services.BookQueryApplicationService;
-import com.finalproject.presentation.spring.mvc.dto.BookCardView;
+import com.finalproject.presentation.spring.mvc.mapper.BookWebMapper;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -24,11 +24,14 @@ import java.util.stream.Collectors;
 public class MvcHomeController {
     private final BookQueryApplicationService bookQueryApplicationService;
     private final MvcSessionService mvcSessionService;
+    private final BookWebMapper bookWebMapper;
 
     public MvcHomeController(BookQueryApplicationService bookQueryApplicationService,
-                             MvcSessionService mvcSessionService) {
+                             MvcSessionService mvcSessionService,
+                             BookWebMapper bookWebMapper) {
         this.bookQueryApplicationService = bookQueryApplicationService;
         this.mvcSessionService = mvcSessionService;
+        this.bookWebMapper = bookWebMapper;
     }
 
     @GetMapping({"", "/"})
@@ -61,22 +64,9 @@ public class MvcHomeController {
 
         model.addAttribute("user", mvcSessionService.get(session));
         model.addAttribute("keyword", keyword == null ? "" : keyword);
-        model.addAttribute("trendingBooks", toBookCards(trending.content()));
+        model.addAttribute("trendingBooks", bookWebMapper.toBookCards(trending.content()));
         model.addAttribute("booksPage", below);
-        model.addAttribute("bookCards", toBookCards(filteredBelow));
+        model.addAttribute("bookCards", bookWebMapper.toBookCards(filteredBelow));
         return "mvc/books/home";
-    }
-
-    private List<BookCardView> toBookCards(List<FindBookResponse> books) {
-        return books.stream()
-                .map(b -> new BookCardView(
-                        b.getBookId(),
-                        b.getTitle(),
-                        (b.getAuthorName() + " " + b.getAuthorSurname()).trim(),
-                        b.getAbout(),
-                        b.getCoverPath(),
-                        b.getYear()
-                ))
-                .toList();
     }
 }

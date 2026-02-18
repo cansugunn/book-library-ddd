@@ -9,8 +9,9 @@ public class BookJpaEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "author_id", nullable = false)
-    private Integer authorId;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "author_id", nullable = false)
+    private AuthorJpaEntity author;
 
     @Column(nullable = false)
     private String title;
@@ -28,8 +29,8 @@ public class BookJpaEntity {
 
     public Integer getId() { return id; }
     public void setId(Integer id) { this.id = id; }
-    public Integer getAuthorId() { return authorId; }
-    public void setAuthorId(Integer authorId) { this.authorId = authorId; }
+    public AuthorJpaEntity getAuthor() { return author; }
+    public void setAuthor(AuthorJpaEntity author) { this.author = author; }
     public String getTitle() { return title; }
     public void setTitle(String title) { this.title = title; }
     public Integer getYear() { return year; }

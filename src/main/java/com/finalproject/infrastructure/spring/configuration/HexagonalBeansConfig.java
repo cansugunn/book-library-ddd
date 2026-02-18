@@ -9,7 +9,7 @@ import com.finalproject.application.ports.input.services.BookCommandApplicationS
 import com.finalproject.application.ports.input.services.BookQueryApplicationService;
 import com.finalproject.application.ports.input.services.UserApplicationService;
 import com.finalproject.application.ports.input.services.UserBookStateApplicationService;
-import com.finalproject.application.ports.output.fms.FileManagementService;
+import com.finalproject.application.ports.output.fms.FileStoragePort;
 import com.finalproject.application.ports.output.repository.AuthorRepository;
 import com.finalproject.application.ports.output.repository.BookRepository;
 import com.finalproject.application.ports.output.repository.UnitOfWork;
@@ -22,14 +22,16 @@ import com.finalproject.application.services.BookCommandApplicationServiceImpl;
 import com.finalproject.application.services.BookQueryApplicationServiceImpl;
 import com.finalproject.application.services.UserApplicationServiceImpl;
 import com.finalproject.application.services.UserBookStateApplicationServiceImpl;
+import com.finalproject.infrastructure.common.fms.FileStoragePortDecorator;
+import com.finalproject.infrastructure.common.fms.LocalFileStorageAdapter;
+import com.finalproject.infrastructure.common.fms.SpringWebFileUrlResolver;
+import com.finalproject.infrastructure.common.security.CypherPasswordEncryptor;
+import com.finalproject.infrastructure.common.security.ThreadLocalCurrentUser;
 import com.finalproject.infrastructure.spring.persistence.jpa.adapter.JpaAuthorRepositoryAdapter;
 import com.finalproject.infrastructure.spring.persistence.jpa.adapter.JpaBookRepositoryAdapter;
 import com.finalproject.infrastructure.spring.persistence.jpa.adapter.JpaUserBookStateRepositoryAdapter;
 import com.finalproject.infrastructure.spring.persistence.jpa.adapter.JpaUserRepositoryAdapter;
 import com.finalproject.infrastructure.spring.persistence.jpa.config.JpaUnitOfWork;
-import com.finalproject.infrastructure.common.fms.LocalFileManagementService;
-import com.finalproject.infrastructure.common.security.CypherPasswordEncryptor;
-import com.finalproject.infrastructure.common.security.ThreadLocalCurrentUser;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -72,8 +74,8 @@ public class HexagonalBeansConfig {
     }
 
     @Bean
-    public FileManagementService fileManagementService() {
-        return new LocalFileManagementService();
+    public FileStoragePort fileStoragePort() {
+        return new FileStoragePortDecorator(new LocalFileStorageAdapter(), new SpringWebFileUrlResolver());
     }
 
     @Bean
@@ -97,8 +99,8 @@ public class HexagonalBeansConfig {
     @Bean
     public BookQueryApplicationService bookQueryApplicationService(BookRepository bookRepository,
                                                                    AuthorRepository authorRepository,
-                                                                   FileManagementService fileManagementService) {
-        return new BookQueryApplicationServiceImpl(bookRepository, authorRepository, new BookDataMapper(), fileManagementService);
+                                                                   FileStoragePort fileStoragePort) {
+        return new BookQueryApplicationServiceImpl(bookRepository, authorRepository, new BookDataMapper(), fileStoragePort);
     }
 
     @Bean
@@ -114,13 +116,13 @@ public class HexagonalBeansConfig {
                                                                            AuthorRepository authorRepository,
                                                                            UserRepository userRepository,
                                                                            CurrentUser currentUser,
-                                                                           FileManagementService fileManagementService) {
+                                                                           FileStoragePort fileStoragePort) {
         return new UserBookStateApplicationServiceImpl(userBookStateRepository,
                 bookRepository,
                 authorRepository,
                 userRepository,
                 new UserBookStateMapper(),
                 currentUser,
-                fileManagementService);
+                fileStoragePort);
     }
 }

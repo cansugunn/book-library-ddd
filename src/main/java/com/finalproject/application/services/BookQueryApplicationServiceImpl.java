@@ -7,7 +7,7 @@ import com.finalproject.application.dto.page.PageQuery;
 import com.finalproject.application.dto.page.PageResult;
 import com.finalproject.application.mapper.BookDataMapper;
 import com.finalproject.application.ports.input.services.BookQueryApplicationService;
-import com.finalproject.application.ports.output.fms.FileManagementService;
+import com.finalproject.application.ports.output.fms.FileStoragePort;
 import com.finalproject.application.ports.output.repository.AuthorRepository;
 import com.finalproject.application.ports.output.repository.BookRepository;
 import com.finalproject.domain.entity.Author;
@@ -19,16 +19,16 @@ public class BookQueryApplicationServiceImpl implements BookQueryApplicationServ
     private final BookDataMapper bookDataMapper;
     private final BookRepository bookRepository;
     private final AuthorRepository authorRepository;
-    private final FileManagementService fileManagementService;
+    private final FileStoragePort fileStoragePort;
 
     public BookQueryApplicationServiceImpl(BookRepository bookRepository,
                                            AuthorRepository authorRepository,
                                            BookDataMapper bookDataMapper,
-                                           FileManagementService fileManagementService) {
+                                           FileStoragePort fileStoragePort) {
         this.bookDataMapper = bookDataMapper;
         this.bookRepository = bookRepository;
         this.authorRepository = authorRepository;
-        this.fileManagementService = fileManagementService;
+        this.fileStoragePort = fileStoragePort;
     }
 
     @Override
@@ -80,7 +80,7 @@ public class BookQueryApplicationServiceImpl implements BookQueryApplicationServ
                 .about(raw.getAbout())
                 .year(raw.getYear())
                 .numberOfPages(raw.getNumberOfPages())
-                .coverPath(fileManagementService.toPublicCoverUrl(raw.getCoverPath()))
+                .coverPath(fileStoragePort.resolvePublicUrl(raw.getCoverPath()))
                 .build();
     }
 }

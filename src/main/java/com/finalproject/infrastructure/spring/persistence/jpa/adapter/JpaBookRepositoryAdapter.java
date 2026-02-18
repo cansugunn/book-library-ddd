@@ -8,7 +8,7 @@ import com.finalproject.domain.valueobject.BookId;
 import com.finalproject.domain.valueobject.UserId;
 import com.finalproject.infrastructure.spring.persistence.jpa.entity.BookJpaEntity;
 import com.finalproject.infrastructure.spring.persistence.jpa.mapper.BookJpaMapper;
-import com.finalproject.infrastructure.spring.persistence.jpa.repository.SpringDataBookRepository;
+import com.finalproject.infrastructure.spring.persistence.jpa.repository.JpaBookRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
@@ -18,10 +18,10 @@ import java.util.Optional;
 
 @Component
 public class JpaBookRepositoryAdapter implements BookRepository {
-    private final SpringDataBookRepository repository;
+    private final JpaBookRepository repository;
     private final BookJpaMapper mapper;
 
-    public JpaBookRepositoryAdapter(SpringDataBookRepository repository,
+    public JpaBookRepositoryAdapter(JpaBookRepository repository,
                                     BookJpaMapper mapper) {
         this.repository = repository;
         this.mapper = mapper;

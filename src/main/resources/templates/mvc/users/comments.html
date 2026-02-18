@@ -1,13 +1,8 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mis comentarios</title>
-    <link rel="stylesheet/less" type="text/css" href="/resources/less/mvc.less" />
-    <script src="https://cdn.jsdelivr.net/npm/less@4"></script>
-</head>
+<head th:replace="~{mvc/fragments/layout :: head('Mis comentarios')}"></head>
 <body>
+<div class="main-shell">
 <header class="nav-shell compact">
     <div class="logo">Bookverse</div>
     <nav class="nav-actions">
@@ -21,7 +16,7 @@
     <div class="card" th:if="${commentStates.isEmpty()}">
         <p>No tienes comentarios todavía.</p>
     </div>
-    <div class="card" th:each="item : ${commentStates}">
+    <div class="card comment-card" th:each="item : ${commentStates}">
         <div class="comment-header">
             <a th:href="@{/mvc/books/{id}(id=${item.bookId})}" th:text="${item.title}"></a>
             <strong th:text="${'⭐ ' + (item.rating != null ? item.rating : 0)}"></strong>
@@ -30,6 +25,8 @@
             <li th:each="comment : ${item.comments}" th:text="${comment}"></li>
         </ul>
     </div>
+</div>
+<footer th:replace="~{mvc/fragments/layout :: footer}"></footer>
 </div>
 </body>
 </html>

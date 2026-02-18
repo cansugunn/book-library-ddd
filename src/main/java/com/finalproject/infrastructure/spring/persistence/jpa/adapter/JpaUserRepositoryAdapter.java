@@ -5,16 +5,16 @@ import com.finalproject.domain.entity.User;
 import com.finalproject.domain.valueobject.UserId;
 import com.finalproject.domain.valueobject.UserType;
 import com.finalproject.infrastructure.spring.persistence.jpa.entity.UserJpaEntity;
-import com.finalproject.infrastructure.spring.persistence.jpa.repository.SpringDataUserRepository;
+import com.finalproject.infrastructure.spring.persistence.jpa.repository.JpaUserRepository;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
 @Component
 public class JpaUserRepositoryAdapter implements UserRepository {
-    private final SpringDataUserRepository repository;
+    private final JpaUserRepository repository;
 
-    public JpaUserRepositoryAdapter(SpringDataUserRepository repository) {
+    public JpaUserRepositoryAdapter(JpaUserRepository repository) {
         this.repository = repository;
     }
 

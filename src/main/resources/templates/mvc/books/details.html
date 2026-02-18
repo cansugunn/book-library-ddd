@@ -1,13 +1,8 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title th:text="${book.title}"></title>
-    <link rel="stylesheet/less" type="text/css" href="/resources/less/mvc.less" />
-    <script src="https://cdn.jsdelivr.net/npm/less@4"></script>
-</head>
+<head th:replace="~{mvc/fragments/layout :: head('Book detail')}"></head>
 <body>
+<div class="main-shell">
 <header class="nav-shell compact">
     <div class="logo">Bookverse</div>
     <nav class="nav-actions">
@@ -53,5 +48,8 @@
         </div>
     </div>
 </section>
+
+<footer th:replace="~{mvc/fragments/layout :: footer}"></footer>
+</div>
 </body>
 </html>

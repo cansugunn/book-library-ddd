@@ -1,13 +1,8 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
-    <link rel="stylesheet/less" type="text/css" href="/resources/less/mvc.less" />
-    <script src="https://cdn.jsdelivr.net/npm/less@4"></script>
-</head>
+<head th:replace="~{mvc/fragments/layout :: head('Login')}"></head>
 <body>
+<div class="main-shell">
 <header class="nav-shell compact">
     <div class="logo">Bookverse</div>
     <nav class="nav-actions"><a th:href="@{/mvc}">Explore</a></nav>
@@ -23,6 +18,8 @@
             <button type="submit">Sign in</button>
         </form>
     </div>
+</div>
+<footer th:replace="~{mvc/fragments/layout :: footer}"></footer>
 </div>
 </body>
 </html>
