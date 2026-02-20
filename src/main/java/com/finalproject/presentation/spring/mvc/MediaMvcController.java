@@ -45,6 +45,7 @@ public class MediaMvcController {
 
             String type = Files.probeContentType(cover);
             MediaType mediaType = type == null ? MediaType.APPLICATION_OCTET_STREAM : MediaType.parseMediaType(type);
+
             return ResponseEntity.ok().contentType(mediaType).body(new FileSystemResource(cover));
         } catch (Exception e) {
             return ResponseEntity.notFound().build();
