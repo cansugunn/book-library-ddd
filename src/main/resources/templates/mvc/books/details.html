@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,9 +12,17 @@
 <header class="nav-shell compact">
     <div class="logo">Bookverse</div>
     <nav class="nav-actions">
-        <a th:href="@{/mvc}">Explorar</a>
-        <a th:href="@{/mvc/login}" th:if="${user == null}">Iniciar sesión</a>
-        <a th:href="@{/mvc/users/me}" th:if="${user != null}" th:text="${user.username}"></a>
+        <a th:href="@{/mvc/books}">Explorar</a>
+
+        <a th:href="@{/mvc/login}"
+           sec:authorize="isAnonymous()">
+            Iniciar sesión
+        </a>
+
+        <a th:href="@{/mvc/users/me}"
+           sec:authorize="isAuthenticated()"
+           th:text="${#authentication.principal.username}">
+        </a>
     </nav>
 </header>
 

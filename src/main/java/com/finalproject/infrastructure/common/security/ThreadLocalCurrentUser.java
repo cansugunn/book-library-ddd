@@ -5,7 +5,6 @@ import com.finalproject.domain.exception.UserDomainException;
 import com.finalproject.domain.valueobject.UserType;
 
 public class ThreadLocalCurrentUser implements CurrentUser {
-
     private UserContext requireCurrentUser() {
         UserContext context = UserContextHolder.get();
         if (context == null) {

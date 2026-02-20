@@ -4,30 +4,17 @@ import com.finalproject.application.mapper.AuthorDataMapper;
 import com.finalproject.application.mapper.BookDataMapper;
 import com.finalproject.application.mapper.UserBookStateMapper;
 import com.finalproject.application.mapper.UserDataMapper;
-import com.finalproject.application.ports.input.services.AuthorApplicationService;
-import com.finalproject.application.ports.input.services.BookCommandApplicationService;
-import com.finalproject.application.ports.input.services.BookQueryApplicationService;
-import com.finalproject.application.ports.input.services.UserApplicationService;
-import com.finalproject.application.ports.input.services.UserBookStateApplicationService;
-import com.finalproject.application.ports.output.repository.AuthorRepository;
-import com.finalproject.application.ports.output.repository.BookRepository;
-import com.finalproject.application.ports.output.repository.UnitOfWork;
-import com.finalproject.application.ports.output.repository.UserBookStateRepository;
-import com.finalproject.application.ports.output.repository.UserRepository;
+import com.finalproject.application.ports.input.services.*;
+import com.finalproject.application.ports.output.repository.*;
 import com.finalproject.application.ports.output.security.CurrentUser;
 import com.finalproject.application.ports.output.security.PasswordEncryptor;
-import com.finalproject.application.services.AuthorApplicationServiceImpl;
-import com.finalproject.application.services.BookCommandApplicationServiceImpl;
-import com.finalproject.application.services.BookQueryApplicationServiceImpl;
-import com.finalproject.application.services.UserApplicationServiceImpl;
-import com.finalproject.application.services.UserBookStateApplicationServiceImpl;
+import com.finalproject.application.services.*;
+import com.finalproject.infrastructure.common.security.CypherPasswordEncryptor;
 import com.finalproject.infrastructure.spring.persistence.jpa.adapter.AuthorJpaRepositoryAdapter;
 import com.finalproject.infrastructure.spring.persistence.jpa.adapter.BookJpaRepositoryAdapter;
 import com.finalproject.infrastructure.spring.persistence.jpa.adapter.UserBookStateJpaRepositoryAdapter;
 import com.finalproject.infrastructure.spring.persistence.jpa.adapter.UserJpaRepositoryAdapter;
 import com.finalproject.infrastructure.spring.persistence.jpa.config.JpaUnitOfWork;
-import com.finalproject.infrastructure.common.security.CypherPasswordEncryptor;
-import com.finalproject.infrastructure.common.security.ThreadLocalCurrentUser;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -56,11 +43,6 @@ public class HexagonalBeansConfig {
     @Bean
     public UnitOfWork unitOfWork(JpaUnitOfWork unitOfWork) {
         return unitOfWork;
-    }
-
-    @Bean
-    public CurrentUser currentUser() {
-        return new ThreadLocalCurrentUser();
     }
 
     @Bean

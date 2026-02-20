@@ -17,10 +17,10 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/books")
 @Validated
-public class BookCommandController {
+public class BookCommandApiController {
     private final BookCommandApplicationService commandService;
 
-    public BookCommandController(BookCommandApplicationService commandService) {
+    public BookCommandApiController(BookCommandApplicationService commandService) {
         this.commandService = commandService;
     }
 

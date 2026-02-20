@@ -16,10 +16,10 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/books")
 @Validated
-public class BookQueryController {
+public class BookQueryApiController {
     private final BookQueryApplicationService queryService;
 
-    public BookQueryController(BookQueryApplicationService queryService) {
+    public BookQueryApiController(BookQueryApplicationService queryService) {
         this.queryService = queryService;
     }
 

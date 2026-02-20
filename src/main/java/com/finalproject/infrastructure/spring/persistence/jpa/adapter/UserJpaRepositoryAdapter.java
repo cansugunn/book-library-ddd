@@ -22,6 +22,11 @@ public class UserJpaRepositoryAdapter implements UserRepository {
     }
 
     @Override
+    public Optional<User> findByUsername(String username) {
+        return userJpaRepository.findByUsername(username).map(userJpaMapper::toDomain);
+    }
+
+    @Override
     public Optional<User> findByUsernameAndPassword(String username, String password) {
         return userJpaRepository.findByUsernameAndPassword(username, password).map(userJpaMapper::toDomain);
     }

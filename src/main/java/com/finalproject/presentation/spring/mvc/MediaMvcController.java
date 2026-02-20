@@ -15,15 +15,34 @@ import java.nio.file.Path;
 
 @Controller
 @RequestMapping("/mvc/media")
-public class MvcMediaController {
+public class MediaMvcController {
+    private static final Path DEFAULT_IMAGE_PATH = Path.of(
+            "src",
+            "main",
+            "resources",
+            "static",
+            "resources",
+            "images",
+            "placeholder-cover.svg"
+    );
+
     @GetMapping("/cover")
     @ResponseBody
     public ResponseEntity<Resource> mediaCover(@RequestParam("path") String path) {
+        if (path == null || path.isEmpty()) {
+            return ResponseEntity.ok()
+                    .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                    .body(new FileSystemResource(DEFAULT_IMAGE_PATH));
+        }
+
         try {
             Path cover = Path.of(path).normalize().toAbsolutePath();
             if (!Files.exists(cover) || !Files.isRegularFile(cover)) {
-                return ResponseEntity.notFound().build();
+                return ResponseEntity.ok()
+                        .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                        .body(new FileSystemResource(DEFAULT_IMAGE_PATH));
             }
+
             String type = Files.probeContentType(cover);
             MediaType mediaType = type == null ? MediaType.APPLICATION_OCTET_STREAM : MediaType.parseMediaType(type);
             return ResponseEntity.ok().contentType(mediaType).body(new FileSystemResource(cover));

@@ -40,6 +40,28 @@ public class JdbcUserRepository implements UserRepository {
     }
 
     @Override
+    public Optional<User> findByUsername(String username) {
+        String sql = """
+                SELECT * 
+                FROM userinfo
+                 WHERE username = ?
+                """;
+
+        Connection connection = databaseConfig.getConnection();
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            preparedStatement.setString(1, username);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            if (resultSet.next()) {
+                return Optional.of(JdbcUserMapper.toUser(resultSet));
+            }
+            return Optional.empty();
+        } catch (SQLException e) {
+            throw new RuntimeException("Error finding user by credentials", e);
+        }
+    }
+
+    @Override
     public Optional<User> findByUsernameAndPassword(String username, String password) {
         String sql = """
                 SELECT * 

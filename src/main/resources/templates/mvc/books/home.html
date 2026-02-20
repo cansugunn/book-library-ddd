@@ -1,10 +1,11 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bookverse</title>
-    <link rel="stylesheet/less" type="text/css" href="/resources/less/mvc.less" />
+    <link rel="stylesheet/less" type="text/css" href="/resources/less/mvc.less"/>
     <script src="https://cdn.jsdelivr.net/npm/less@4"></script>
 </head>
 <body>
@@ -13,12 +14,30 @@
     <form class="search" method="get" th:action="@{/mvc}">
         <input name="q" th:value="${keyword}" placeholder="Buscar historias, autores o títulos"/>
     </form>
-    <nav class="nav-actions" th:if="${user == null}">
+
+    <nav class="nav-actions" sec:authorize="isAnonymous()">
         <a th:href="@{/mvc/login}">Iniciar sesión</a>
         <a class="cta" th:href="@{/mvc/login}">Regístrate</a>
     </nav>
-    <nav class="nav-actions" th:if="${user != null}">
-        <a th:href="@{/mvc/users/me}" th:text="${user.username + ' (' + user.userType + ')'}"></a>
+
+
+    <nav class="nav-actions" sec:authorize="isAuthenticated()">
+        <span sec:authentication="name"></span>
+        <a th:href="@{/mvc/logout}">Logout</a>
+    </nav>
+
+    <nav class="nav-actions" sec:authorize="isAnonymous()">
+        <a th:href="@{/mvc/login}">Iniciar sesión</a>
+        <a class="cta" th:href="@{/mvc/login}">Regístrate</a>
+    </nav>
+
+    <nav class="nav-actions" sec:authorize="isAuthenticated()">
+        <a th:href="@{/mvc/users/me}">
+            <span sec:authentication="name"></span>
+            <span>
+            (<span sec:authentication="principal.userType"></span>)
+        </span>
+        </a>
         <a th:href="@{/mvc/users/me/favourites}">Favoritos</a>
         <a th:href="@{/mvc/logout}">Salir</a>
     </nav>
@@ -27,17 +46,18 @@
 <section class="hero">
     <div class="hero-copy">
         <h1>Ven por la historia. Quédate por la conexión.</h1>
-        <p>Explora historias modernas con carrusel en vivo y catálogo paginado. Los visitantes pueden navegar libremente, el perfil desbloquea favoritos y comentarios.</p>
+        <p>Explora historias modernas con carrusel en vivo y catálogo paginado. Los visitantes pueden navegar
+            libremente, el perfil desbloquea favoritos y comentarios.</p>
         <a class="hero-btn" th:href="@{/mvc/login}" th:if="${user == null}">Comenzar</a>
         <a class="hero-btn" th:href="@{/mvc/users/me/favourites}" th:if="${user != null}">Mis favoritos</a>
     </div>
     <div class="hero-art">
         <div class="wave"></div>
         <div class="bubble" th:each="book : ${trendingBooks}">
-            <img th:src="@{/mvc/media/cover(path=${book.coverUrl()})}" />
+            <img th:src="@{/mvc/media/cover(path=${book.coverPath})}"/>
             <div>
                 <strong th:text="${book.title}"></strong>
-                <small th:text="${book.author}"></small>
+                <small th:text="|${book.authorName} ${book.authorSurname}|"></small>
             </div>
         </div>
     </div>
@@ -47,34 +67,14 @@
     <div class="section-head"><h2>Trending now</h2></div>
     <div class="carousel-viewport">
         <div class="carousel-track">
-            <a class="story-card" th:each="book : ${trendingBooks}" th:href="@{/mvc/books/{id}(id=${book.id})}">
-                <img th:src="@{/mvc/media/cover(path=${book.coverUrl()})}" alt="cover"/>
+            <a class="story-card" th:each="book : ${trendingBooks}" th:href="@{/mvc/books/{id}(id=${book.bookId})}">
+                <img th:src="@{/mvc/media/cover(path=${book.coverPath})}" alt="cover"/>
                 <h3 th:text="${book.title}"></h3>
-                <p th:text="${book.author}"></p>
+                <p th:text="|${book.authorName} ${book.authorSurname}|"></p>
             </a>
         </div>
     </div>
 </section>
 
-<section class="section muted">
-    <div class="section-head">
-        <h2>Catálogo</h2>
-        <small th:if="${keyword != ''}" th:text="${'Resultado para: ' + keyword}"></small>
-    </div>
-    <div class="grid-list">
-        <a class="list-item" th:each="book : ${bookCards}" th:href="@{/mvc/books/{id}(id=${book.id})}">
-            <img th:src="@{/mvc/media/cover(path=${book.coverUrl()})}" alt="cover"/>
-            <div>
-                <h4 th:text="${book.title}"></h4>
-                <p th:text="${book.about}"></p>
-            </div>
-        </a>
-    </div>
-    <div class="pager">
-        <a th:if="${booksPage.page > 0}" th:href="@{/mvc(page=${booksPage.page - 1},size=${booksPage.size},q=${keyword})}">Anterior</a>
-        <span th:text="${'Página ' + (booksPage.page + 1) + ' / ' + (booksPage.totalPages == 0 ? 1 : booksPage.totalPages)}"></span>
-        <a th:if="${booksPage.page + 1 < booksPage.totalPages}" th:href="@{/mvc(page=${booksPage.page + 1},size=${booksPage.size},q=${keyword})}">Siguiente</a>
-    </div>
-</section>
 </body>
 </html>

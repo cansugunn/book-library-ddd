@@ -9,10 +9,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/user-book-states")
-public class UserBookStateController {
+public class UserBookStateApiController {
     private final UserBookStateApplicationService service;
 
-    public UserBookStateController(UserBookStateApplicationService service) {
+    public UserBookStateApiController(UserBookStateApplicationService service) {
         this.service = service;
     }
 

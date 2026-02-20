@@ -2,7 +2,6 @@ package com.finalproject.infrastructure.spring.security.filter;
 
 import com.finalproject.domain.valueobject.UserType;
 import com.finalproject.infrastructure.common.security.UserContext;
-import com.finalproject.infrastructure.common.security.UserContextHolder;
 import com.finalproject.infrastructure.spring.security.jwt.JwtTokenProvider;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
@@ -15,13 +14,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.List;
 
-@Component
+//todo
 public class UserContextFilter extends OncePerRequestFilter {
     private static final String BEARER_PREFIX = "Bearer ";
     private final JwtTokenProvider jwtTokenProvider;
@@ -66,19 +64,19 @@ public class UserContextFilter extends OncePerRequestFilter {
                 return;
             }
 
-            UserContextHolder.set(new UserContext(userId, username, UserType.valueOf(userType)));
+            UserContext userContext = new UserContext(userId, username, UserType.valueOf(userType));
             UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-                    username,
+                    userContext,
                     null,
                     List.of(new SimpleGrantedAuthority("ROLE_" + userType))
             );
             SecurityContextHolder.getContext().setAuthentication(authentication);
+
             filterChain.doFilter(request, response);
         } catch (JwtException | IllegalArgumentException ex) {
             response.sendError(HttpStatus.UNAUTHORIZED.value(), "Invalid or expired token");
         } finally {
             SecurityContextHolder.clearContext();
-            UserContextHolder.clear();
         }
     }
 }
