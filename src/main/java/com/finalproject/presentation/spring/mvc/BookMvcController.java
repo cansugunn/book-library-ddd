@@ -2,6 +2,7 @@ package com.finalproject.presentation.spring.mvc;
 
 import com.finalproject.application.dto.FindBookResponse;
 import com.finalproject.application.dto.FindUserBookStateResponse;
+import com.finalproject.application.dto.FindUserBookStatisticsResponse;
 import com.finalproject.application.dto.book.query.GetBookQuery;
 import com.finalproject.application.dto.book.query.SearchBooksQuery;
 import com.finalproject.application.dto.page.PageQuery;
@@ -27,21 +28,27 @@ public class BookMvcController {
     public String bookDetails(@PathVariable int bookId, Model model) {
         FindBookResponse book = bookQueryApplicationService.find(new GetBookQuery(bookId));
         FindUserBookStateResponse state = userBookStateApplicationService.findUserBookOfCurrentUser(bookId);
+        FindUserBookStatisticsResponse statistics = userBookStateApplicationService.findUserBookStatistics(bookId);
 
         model.addAttribute("book", book);
         model.addAttribute("bookState", state);
+        model.addAttribute("statistics", statistics);
 
         return "mvc/books/details";
     }
 
     @GetMapping
     public String home(@RequestParam(required = false) String keyword, Model model) {
-        PageResult<FindBookResponse> trending =
+        PageResult<FindBookResponse> baseBooks =
                 bookQueryApplicationService.findAll(
-                        new SearchBooksQuery(keyword, new PageQuery(0, 10)));
+                        new SearchBooksQuery(keyword, new PageQuery(0, 5)));
+        PageResult<FindBookResponse> trendingBooks =
+                bookQueryApplicationService.findAll(
+                        new SearchBooksQuery(keyword, new PageQuery(0, 20)));
 
         model.addAttribute("keyword", keyword);
-        model.addAttribute("trendingBooks", trending.content());
+        model.addAttribute("baseBooks", baseBooks.content());
+        model.addAttribute("trendingBooks", trendingBooks.content());
 
         return "mvc/books/home";
     }

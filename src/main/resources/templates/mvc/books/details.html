@@ -11,18 +11,21 @@
 <body>
 <header class="nav-shell compact">
     <div class="logo">Bookverse</div>
-    <nav class="nav-actions">
-        <a th:href="@{/mvc/books}">Explorar</a>
+    <form class="search" method="get" th:action="@{/mvc/books}">
+        <input name="q" th:value="${keyword}" placeholder="Buscar historias, autores o títulos"/>
+    </form>
 
-        <a th:href="@{/mvc/login}"
-           sec:authorize="isAnonymous()">
-            Iniciar sesión
-        </a>
+    <nav class="nav-actions" sec:authorize="isAnonymous()">
+        <a th:href="@{/mvc/login}">Iniciar sesión</a>
+        <a class="cta" th:href="@{/mvc/login}">Regístrate</a>
+    </nav>
 
-        <a th:href="@{/mvc/users/me}"
-           sec:authorize="isAuthenticated()"
-           th:text="${#authentication.principal.username}">
+
+    <nav class="nav-actions" sec:authorize="isAuthenticated()">
+        <a th:href="@{/mvc/users/me}">
+            <span sec:authentication="name"></span>
         </a>
+        <a th:href="@{/mvc/logout}">Logout</a>
     </nav>
 </header>
 
@@ -33,18 +36,25 @@
         <p class="meta" th:text="${book.authorName + ' ' + book.authorSurname + ' · ' + book.year + ' · ' + book.numberOfPages + ' páginas'}"></p>
         <p th:text="${book.about}"></p>
         <div class="stats-row">
-            <div><span>Lecturas</span><strong>120K</strong></div>
-            <div><span>Votos</span><strong th:text="${bookState != null && bookState.rating != null ? (bookState.rating * 2) + 'K' : '—'}"></strong></div>
-            <div><span>Comentarios</span><strong th:text="${bookState != null && bookState.comments != null ? #lists.size(bookState.comments) : 0}"></strong></div>
+            <div>
+                <span>Lecturas</span>
+                <strong th:text="${statistics.totalReads}"></strong>
+            </div>
+
+            <div>
+                <span>Votos</span>
+                <strong th:text="${statistics.averageRating}"></strong>
+            </div>
+
+            <div>
+                <span>Comentarios</span>
+                <strong th:text="${statistics.commentsCount}"></strong>
+            </div>
         </div>
     </div>
 </section>
 
 <section class="section detail-grid">
-    <div class="card">
-        <h2>Reseña</h2>
-        <p th:text="${book.about}"></p>
-    </div>
     <div class="card">
         <h2>Rate & comments</h2>
         <div th:if="${bookState != null}">

@@ -11,7 +11,7 @@
 <body>
 <header class="nav-shell">
     <div class="logo">Bookverse</div>
-    <form class="search" method="get" th:action="@{/mvc}">
+    <form class="search" method="get" th:action="@{/mvc/books}">
         <input name="q" th:value="${keyword}" placeholder="Buscar historias, autores o títulos"/>
     </form>
 
@@ -22,24 +22,10 @@
 
 
     <nav class="nav-actions" sec:authorize="isAuthenticated()">
-        <span sec:authentication="name"></span>
-        <a th:href="@{/mvc/logout}">Logout</a>
-    </nav>
-
-    <nav class="nav-actions" sec:authorize="isAnonymous()">
-        <a th:href="@{/mvc/login}">Iniciar sesión</a>
-        <a class="cta" th:href="@{/mvc/login}">Regístrate</a>
-    </nav>
-
-    <nav class="nav-actions" sec:authorize="isAuthenticated()">
         <a th:href="@{/mvc/users/me}">
             <span sec:authentication="name"></span>
-            <span>
-            (<span sec:authentication="principal.userType"></span>)
-        </span>
         </a>
-        <a th:href="@{/mvc/users/me/favourites}">Favoritos</a>
-        <a th:href="@{/mvc/logout}">Salir</a>
+        <a th:href="@{/mvc/logout}">Logout</a>
     </nav>
 </header>
 
@@ -48,12 +34,12 @@
         <h1>Ven por la historia. Quédate por la conexión.</h1>
         <p>Explora historias modernas con carrusel en vivo y catálogo paginado. Los visitantes pueden navegar
             libremente, el perfil desbloquea favoritos y comentarios.</p>
-        <a class="hero-btn" th:href="@{/mvc/login}" th:if="${user == null}">Comenzar</a>
-        <a class="hero-btn" th:href="@{/mvc/users/me/favourites}" th:if="${user != null}">Mis favoritos</a>
+        <a class="hero-btn" th:href="@{/mvc/login}" sec:authorize="isAnonymous()">Comenzar</a>
+        <a class="hero-btn" th:href="@{/mvc/users/me/favourites}" sec:authorize="isAuthenticated()">Mis favoritos</a>
     </div>
     <div class="hero-art">
         <div class="wave"></div>
-        <div class="bubble" th:each="book : ${trendingBooks}">
+        <div class="bubble" th:each="book : ${baseBooks}">
             <img th:src="@{/mvc/media/cover(path=${book.coverPath})}"/>
             <div>
                 <strong th:text="${book.title}"></strong>

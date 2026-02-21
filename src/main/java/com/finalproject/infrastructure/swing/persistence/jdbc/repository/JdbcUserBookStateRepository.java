@@ -1,6 +1,7 @@
 package com.finalproject.infrastructure.swing.persistence.jdbc.repository;
 
 import com.finalproject.application.ports.output.repository.UserBookStateRepository;
+import com.finalproject.application.projection.UserBookStatisticsProjection;
 import com.finalproject.domain.entity.Comment;
 import com.finalproject.domain.entity.UserBookState;
 import com.finalproject.domain.valueobject.*;
@@ -19,6 +20,12 @@ public class JdbcUserBookStateRepository implements UserBookStateRepository {
 
     public JdbcUserBookStateRepository(DatabaseConfig databaseConfig) {
         this.databaseConfig = databaseConfig;
+    }
+
+    @Override
+    public Optional<UserBookStatisticsProjection> findStatisticsByBookId(BookId bookId) {
+        //todo
+        return Optional.empty();
     }
 
     @Override

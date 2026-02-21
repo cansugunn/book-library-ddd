@@ -18,7 +18,7 @@
     <div class="card login-card modern">
         <h2>Welcome back</h2>
         <p class="subtitle">Continue your reading journey</p>
-        <p class="error" th:if="${error}" th:text="${error}"></p>
+        <p class="error" th:if="${session['SPRING_SECURITY_LAST_EXCEPTION']?.message}" th:text="${session['SPRING_SECURITY_LAST_EXCEPTION'].message}"></p>
         <form th:action="@{/mvc/login}" method="post">
             <label>Username <input type="text" name="username" required></label>
             <label>Password <input type="password" name="password" required></label>

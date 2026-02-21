@@ -1,10 +1,10 @@
 package com.finalproject.application.mapper;
 
 import com.finalproject.application.dto.*;
+import com.finalproject.application.projection.UserBookStatisticsProjection;
 import com.finalproject.domain.entity.*;
 import com.finalproject.domain.valueobject.*;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -124,5 +124,13 @@ public class UserBookStateMapper {
                         .map(Comment::getValue)
                         .toList())
                 .build();
+    }
+
+    public FindUserBookStatisticsResponse
+    toFindUserBookStatisticsResponse(UserBookStatisticsProjection userBookStatisticsProjection) {
+        return new FindUserBookStatisticsResponse(
+                userBookStatisticsProjection.totalReads(),
+                userBookStatisticsProjection.averageRating(),
+                userBookStatisticsProjection.commentsCount());
     }
 }

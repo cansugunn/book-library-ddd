@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Optional;
 
 @Controller
 @RequestMapping("/mvc/media")
@@ -26,29 +27,34 @@ public class MediaMvcController {
             "placeholder-cover.svg"
     );
 
+    private static final ResponseEntity<Resource> DEFAULT_IMAGE_RESPONSE =
+            ResponseEntity.ok()
+                    .contentType(MediaType.parseMediaType("image/svg+xml"))
+                    .body(new FileSystemResource(DEFAULT_IMAGE_PATH));
+
     @GetMapping("/cover")
     @ResponseBody
     public ResponseEntity<Resource> mediaCover(@RequestParam("path") String path) {
-        if (path == null || path.isEmpty()) {
-            return ResponseEntity.ok()
-                    .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                    .body(new FileSystemResource(DEFAULT_IMAGE_PATH));
+        boolean isValid = Optional.ofNullable(path)
+                .filter(s -> !s.isEmpty())
+                .map(Path::of)
+                .map(Path::normalize)
+                .map(Path::toAbsolutePath)
+                .filter(Files::isRegularFile)
+                .map(Files::isReadable)
+                .orElse(false);
+
+        if (!isValid) {
+            return DEFAULT_IMAGE_RESPONSE;
         }
 
         try {
             Path cover = Path.of(path).normalize().toAbsolutePath();
-            if (!Files.exists(cover) || !Files.isRegularFile(cover)) {
-                return ResponseEntity.ok()
-                        .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                        .body(new FileSystemResource(DEFAULT_IMAGE_PATH));
-            }
-
             String type = Files.probeContentType(cover);
             MediaType mediaType = type == null ? MediaType.APPLICATION_OCTET_STREAM : MediaType.parseMediaType(type);
-
             return ResponseEntity.ok().contentType(mediaType).body(new FileSystemResource(cover));
         } catch (Exception e) {
-            return ResponseEntity.notFound().build();
+            return DEFAULT_IMAGE_RESPONSE;
         }
     }
 }

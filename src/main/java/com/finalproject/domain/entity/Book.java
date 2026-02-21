@@ -39,7 +39,7 @@ public class Book extends BaseEntity<BookId> {
     public void validate() {
         validateYear();
         validateNumberOfPages();
-        validateCover();
+//        validateCover();
     }
 
     private void validateCover() {

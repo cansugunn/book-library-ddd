@@ -1,6 +1,7 @@
 package com.finalproject.infrastructure.spring.persistence.jpa.adapter;
 
 import com.finalproject.application.ports.output.repository.UserBookStateRepository;
+import com.finalproject.application.projection.UserBookStatisticsProjection;
 import com.finalproject.domain.entity.UserBookState;
 import com.finalproject.domain.valueobject.*;
 import com.finalproject.infrastructure.spring.persistence.jpa.mapper.UserBookStateJpaMapper;
@@ -19,6 +20,11 @@ import java.util.Optional;
 public class UserBookStateJpaRepositoryAdapter implements UserBookStateRepository {
     private final UserBookStateJpaRepository userBookStateJpaRepository;
     private final UserBookStateJpaMapper userBookStateJpaMapper;
+
+    @Override
+    public Optional<UserBookStatisticsProjection> findStatisticsByBookId(BookId bookId) {
+        return userBookStateJpaRepository.findStatisticsByBookId(bookId.getValue());
+    }
 
     @Override
     public Optional<UserBookState> findByBookIdAndUserId(BookId bookId, UserId userId) {

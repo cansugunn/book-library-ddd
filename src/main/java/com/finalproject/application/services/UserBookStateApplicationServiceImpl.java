@@ -1,6 +1,7 @@
 package com.finalproject.application.services;
 
 import com.finalproject.application.dto.*;
+import com.finalproject.application.dto.page.PageResult;
 import com.finalproject.application.mapper.UserBookStateMapper;
 import com.finalproject.application.ports.input.services.UserBookStateApplicationService;
 import com.finalproject.application.ports.output.repository.AuthorRepository;
@@ -59,6 +60,13 @@ public class UserBookStateApplicationServiceImpl implements UserBookStateApplica
                 book,
                 author,
                 commentList);
+    }
+
+    @Override
+    public FindUserBookStatisticsResponse findUserBookStatistics(int bookId) {
+        return userBookStateRepository.findStatisticsByBookId(new BookId(bookId))
+                .map(userBookStateMapper::toFindUserBookStatisticsResponse)
+                .orElseGet(() -> new FindUserBookStatisticsResponse(0L, 0D, 0L));
     }
 
     @Override

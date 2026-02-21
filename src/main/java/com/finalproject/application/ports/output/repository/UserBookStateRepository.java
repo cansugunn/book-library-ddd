@@ -1,5 +1,6 @@
 package com.finalproject.application.ports.output.repository;
 
+import com.finalproject.application.projection.UserBookStatisticsProjection;
 import com.finalproject.domain.entity.UserBookState;
 import com.finalproject.domain.valueobject.BookId;
 import com.finalproject.domain.valueobject.Rating;
@@ -10,6 +11,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface UserBookStateRepository {
+    Optional<UserBookStatisticsProjection> findStatisticsByBookId(BookId bookId);
 
     Optional<UserBookState> findByBookIdAndUserId(BookId bookId, UserId userId);
 
