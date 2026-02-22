@@ -7,21 +7,19 @@ import com.finalproject.application.dto.page.PageQuery;
 import com.finalproject.application.dto.page.PageResult;
 import com.finalproject.application.ports.input.services.BookQueryApplicationService;
 import jakarta.validation.constraints.Min;
+import lombok.RequiredArgsConstructor;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/books")
 @Validated
 public class BookQueryApiController {
     private final BookQueryApplicationService queryService;
-
-    public BookQueryApiController(BookQueryApplicationService queryService) {
-        this.queryService = queryService;
-    }
 
     @GetMapping("/{bookId}")
     public FindBookResponse findBook(@PathVariable @Min(1) int bookId) {

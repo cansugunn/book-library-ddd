@@ -9,13 +9,6 @@ public class User extends BaseEntity<UserId> {
     private String password;
     private final UserType userType;
 
-    public User(UserId id, String username, String password, UserType userType) {
-        super(id);
-        this.username = username;
-        this.password = password;
-        this.userType = userType;
-    }
-
     private User(Builder builder) {
         super(builder.id);
         username = builder.username;

@@ -25,8 +25,13 @@ public class BookJpaMapper {
                 .flatMap(bookJpaRepository::findById)
                 .orElseGet(BookJpaEntity::new);
 
-        entity.setId(book.getId().getValue());
-        entity.setAuthor(entityManager.getReference(AuthorJpaEntity.class, book.getAuthorId().getValue()));
+        entity.setId(Optional.ofNullable(book.getId())
+                .map(BookId::getValue)
+                .orElse(null));
+        entity.setAuthor(Optional.ofNullable(book.getAuthorId())
+                .map(AuthorId::getValue)
+                .map(id -> entityManager.getReference(AuthorJpaEntity.class, id))
+                .orElse(null));
         entity.setTitle(book.getTitle());
         entity.setYear(Optional.ofNullable(book.getYear())
                 .map(Year::getValue)
@@ -44,8 +49,13 @@ public class BookJpaMapper {
 
     public Book toDomain(BookJpaEntity entity) {
         return Book.Builder.newBuilder()
-                .id(new BookId(entity.getId()))
-                .author(new AuthorId(entity.getAuthor().getId()))
+                .id(Optional.ofNullable(entity.getId())
+                        .map(BookId::new)
+                        .orElse(null))
+                .author(Optional.ofNullable(entity.getAuthor())
+                        .map(AuthorJpaEntity::getId)
+                        .map(AuthorId::new)
+                        .orElse(null))
                 .title(entity.getTitle())
                 .year(Optional.ofNullable(entity.getYear())
                         .map(Year::new)

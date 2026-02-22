@@ -12,12 +12,12 @@
 <header class="nav-shell compact">
     <div class="logo">Bookverse</div>
     <form class="search" method="get" th:action="@{/mvc/books}">
-        <input name="q" th:value="${keyword}" placeholder="Buscar historias, autores o títulos"/>
+        <input name="q" th:value="${keyword}" placeholder="Search for stories, authors, or titles"/>
     </form>
 
     <nav class="nav-actions" sec:authorize="isAnonymous()">
-        <a th:href="@{/mvc/login}">Iniciar sesión</a>
-        <a class="cta" th:href="@{/mvc/login}">Regístrate</a>
+        <a th:href="@{/mvc/login}">Login</a>
+        <a class="cta" th:href="@{/mvc/login}">Sign Up</a>
     </nav>
 
 
@@ -33,7 +33,7 @@
     <img class="book-hero-cover" th:src="@{/mvc/media/cover(path=${book.coverPath})}" alt="cover"/>
     <div class="book-hero-copy">
         <h1 th:text="${book.title}"></h1>
-        <p class="meta" th:text="${book.authorName + ' ' + book.authorSurname + ' · ' + book.year + ' · ' + book.numberOfPages + ' páginas'}"></p>
+        <p class="meta" th:text="${book.authorName + ' ' + book.authorSurname + ' · ' + book.year + ' · ' + book.numberOfPages + ' pages'}"></p>
         <p th:text="${book.about}"></p>
         <div class="stats-row">
             <div>
@@ -58,17 +58,17 @@
     <div class="card">
         <h2>Rate & comments</h2>
         <div th:if="${bookState != null}">
-            <p>Tu calificación: <strong th:text="${bookState.rating != null ? bookState.rating : 'Sin calificar'}"></strong></p>
+            <p>Tu calificación: <strong th:text="${bookState.rating != null ? bookState.rating : 'Not rated'}"></strong></p>
             <ul class="comment-list" th:if="${bookState.comments != null && !bookState.comments.isEmpty()}">
                 <li th:each="comment : ${bookState.comments}">
                     <a th:href="@{/mvc/users/me/comments}" th:text="${comment}"></a>
                 </li>
             </ul>
-            <p th:if="${bookState.comments == null || bookState.comments.isEmpty()}">Aún no hay comentarios guardados para este libro.</p>
+            <p th:if="${bookState.comments == null || bookState.comments.isEmpty()}">There are no saved comments for this book yet.</p>
         </div>
         <div th:if="${bookState == null}">
-            <p>Inicia sesión para ver y gestionar tu rating/comentarios de lectura.</p>
-            <a class="hero-btn" th:href="@{/mvc/login}">Ir a login</a>
+            <p>Log in to view and manage your reading ratings/comments.</p>
+            <a class="hero-btn" th:href="@{/mvc/login}">Go to login</a>
         </div>
     </div>
 </section>

@@ -21,7 +21,10 @@ public class AuthorJpaMapper {
                 .flatMap(authorJpaRepository::findById)
                 .orElseGet(AuthorJpaEntity::new);
 
-        entity.setId(author.getId().getValue());
+        entity.setId(
+                Optional.ofNullable(author.getId())
+                        .map(AuthorId::getValue)
+                        .orElse(null));
         entity.setName(author.getName());
         entity.setSurname(author.getSurname());
         entity.setWebsite(
@@ -33,7 +36,9 @@ public class AuthorJpaMapper {
 
     public Author toDomain(AuthorJpaEntity entity) {
         return new Author.Builder()
-                .id(new AuthorId(entity.getId()))
+                .id(Optional.ofNullable(entity.getId())
+                        .map(AuthorId::new)
+                        .orElse(null))
                 .name(entity.getName())
                 .surname(entity.getSurname())
                 .website(Optional.ofNullable(entity.getWebsite())

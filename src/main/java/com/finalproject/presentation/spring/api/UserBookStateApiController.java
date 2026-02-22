@@ -2,19 +2,18 @@ package com.finalproject.presentation.spring.api;
 
 import com.finalproject.application.dto.*;
 import com.finalproject.application.ports.input.services.UserBookStateApplicationService;
+import com.finalproject.domain.valueobject.Read;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/user-book-states")
 public class UserBookStateApiController {
     private final UserBookStateApplicationService service;
-
-    public UserBookStateApiController(UserBookStateApplicationService service) {
-        this.service = service;
-    }
 
     @GetMapping("/{bookId}")
     public FindUserBookStateResponse findForCurrentUser(@PathVariable int bookId) {
@@ -37,19 +36,28 @@ public class UserBookStateApiController {
     }
 
     @PostMapping
-    public CreateUserBookStateResponse create(@Valid @RequestBody CreateUserBookStateRequest request) {
-        return service.createUserBookForCurrentUser(request);
+    public CreateUserBookStateResponse
+    create(@Valid @RequestBody com.finalproject.presentation.spring.api.dto.CreateUserBookStateRequest request) {
+        CreateUserBookStateRequest mapped = new CreateUserBookStateRequest.Builder()
+                .bookId(request.bookId())
+                .read(Read.valueOf(request.read()))
+                .rating(request.rating())
+                .releaseDate(request.releaseDate())
+                .comments(request.comments())
+                .build();
+        return service.createUserBookForCurrentUser(mapped);
     }
 
     @PutMapping("/{id}")
-    public UpdateUserBookStateResponse update(@PathVariable int id,
-                                               @Valid @RequestBody UpdateUserBookStateRequest request) {
+    public UpdateUserBookStateResponse
+    update(@PathVariable int id,
+           @Valid @RequestBody com.finalproject.presentation.spring.api.dto.UpdateUserBookStateRequest request) {
         UpdateUserBookStateRequest mapped = new UpdateUserBookStateRequest.Builder()
                 .id(id)
-                .read(request.getRead())
-                .rating(request.getRating())
-                .releaseDate(request.getReleaseDate())
-                .comments(request.getComments())
+                .read(Read.valueOf(request.read()))
+                .rating(request.rating())
+                .releaseDate(request.releaseDate())
+                .comments(request.comments())
                 .build();
         return service.updateUserBookForCurrentUser(mapped);
     }

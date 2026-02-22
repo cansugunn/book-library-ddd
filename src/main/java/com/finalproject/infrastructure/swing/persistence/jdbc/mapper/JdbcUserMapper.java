@@ -9,10 +9,11 @@ import java.sql.SQLException;
 
 public class JdbcUserMapper {
     public static User toUser(ResultSet resultSet) throws SQLException {
-        return new User(
-                new UserId(resultSet.getInt("id")),
-                resultSet.getString("username"),
-                resultSet.getString("password"),
-                UserType.of(resultSet.getInt("type")));
+        return new User.Builder()
+                .id(new UserId(resultSet.getInt("id")))
+                .username(resultSet.getString("username"))
+                .password(resultSet.getString("password"))
+                .userType(UserType.of(resultSet.getInt("type")))
+                .build();
     }
 }

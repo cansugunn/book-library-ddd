@@ -18,6 +18,21 @@ CREATE TABLE IF NOT EXISTS books (
     FOREIGN KEY (author_id) REFERENCES authors(id)
     );
 
+-- normal view for h2
+CREATE OR REPLACE VIEW books_read_model AS
+SELECT b.id,
+       b.author_id,
+       a.name AS author_name,
+       a.surname AS author_surname,
+       a.website AS author_website,
+       b.title,
+       b.year,
+       b.number_of_pages,
+       b.cover_path,
+       b.about
+FROM books b
+         JOIN authors a ON a.id = b.author_id;
+
 CREATE TABLE IF NOT EXISTS userinfo (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     username VARCHAR(100) NOT NULL UNIQUE,

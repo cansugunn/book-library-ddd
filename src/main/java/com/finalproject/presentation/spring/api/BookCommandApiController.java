@@ -10,19 +10,17 @@ import com.finalproject.presentation.spring.api.dto.CreateBookRequest;
 import com.finalproject.presentation.spring.api.dto.UpdateBookRequest;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/books")
 @Validated
 public class BookCommandApiController {
     private final BookCommandApplicationService commandService;
-
-    public BookCommandApiController(BookCommandApplicationService commandService) {
-        this.commandService = commandService;
-    }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)

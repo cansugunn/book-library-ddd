@@ -15,7 +15,7 @@ public class MvcSecurityConfig {
     @Bean
     public SecurityFilterChain mvcSecurityFilterChain(HttpSecurity http) throws Exception {
         http
-                .securityMatcher("/mvc/**")
+                .securityMatcher("/**")
                 .csrf().and()
                 .headers(headers ->
                         headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin))
@@ -23,13 +23,14 @@ public class MvcSecurityConfig {
                         .requestMatchers("/",
                                 "/mvc/media/cover",
                                 "/mvc/books",
+                                "/mvc/books/**",
                                 "/mvc/login",
                                 "/resources/**")
                         .permitAll()
                         .anyRequest()
                         .authenticated())
                 .formLogin(form -> form
-                        .loginPage("/mvc/login")
+                        .loginPage("/mvc/books")
                         .loginProcessingUrl("/mvc/login")
                         .defaultSuccessUrl("/mvc/books", true)
                         .failureUrl("/mvc/login?error"))

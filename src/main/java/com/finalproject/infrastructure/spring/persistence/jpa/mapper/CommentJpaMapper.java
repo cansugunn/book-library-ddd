@@ -1,6 +1,7 @@
 package com.finalproject.infrastructure.spring.persistence.jpa.mapper;
 
 import com.finalproject.domain.entity.Comment;
+import com.finalproject.domain.entity.UserBookState;
 import com.finalproject.domain.valueobject.CommentId;
 import com.finalproject.infrastructure.spring.persistence.jpa.entity.CommentJpaEntity;
 import com.finalproject.infrastructure.spring.persistence.jpa.entity.UserBookStateJpaEntity;
@@ -23,18 +24,17 @@ public class CommentJpaMapper {
         return new Comment(new CommentId(entity.getId()), entity.getValue());
     }
 
-    public CommentJpaEntity toEntity(Comment comment) {
+    public CommentJpaEntity toEntity(Comment comment, UserBookStateJpaEntity userBookStateJpaEntity) {
         CommentJpaEntity entity = Optional.ofNullable(comment.getId())
                 .map(CommentId::getValue)
                 .flatMap(commentJpaRepository::findById)
                 .orElseGet(CommentJpaEntity::new);
 
-        entity.setId(comment.getId().getValue());
+        entity.setId(Optional.ofNullable(comment.getId())
+                .map(CommentId::getValue)
+                .orElse(null));
         entity.setValue(comment.getValue());
-        entity.setUserBookState(
-                entityManager.getReference(
-                        UserBookStateJpaEntity.class,
-                        entity.getUserBookState().getId()));
+        entity.setUserBookState(userBookStateJpaEntity);
 
         return entity;
     }
