@@ -12,9 +12,9 @@
 <header class="nav-shell compact">
     <div class="logo">Bookverse</div>
     <nav class="nav-actions">
-        <a th:href="@{/mvc}">Explorar</a>
-        <a th:href="@{/mvc/users/me/comments}">Mis comentarios</a>
-        <a th:href="@{/mvc/logout}">Salir</a>
+        <a th:href="@{/mvc}">Explore</a>
+        <a th:href="@{/mvc/users/me/comments}">My comments</a>
+        <a th:href="@{/mvc/logout}">Sign Out</a>
     </nav>
 </header>
 <div class="page">
@@ -26,12 +26,12 @@
         </p>
     </div>
 
-    <div class="section-head"><h2>Mis favoritos</h2></div>
+    <div class="section-head"><h2>My favourites</h2></div>
     <div class="carousel">
         <a class="story-card" th:each="fav : ${favourites}" th:href="@{/mvc/books/{id}(id=${fav.bookId})}">
             <img th:src="${fav.coverPath}" alt="cover"/>
             <h3 th:text="${fav.title}"></h3>
-            <p th:text="${'⭐ ' + (fav.rating != null ? fav.rating : 0) + ' · ' + (#lists.size(fav.comments)) + ' comentarios'}"></p>
+            <p th:text="${'⭐ ' + (fav.rating != null ? fav.rating : 0) + ' · ' + (#lists.size(fav.comments)) + ' comments'}"></p>
         </a>
     </div>
 </div>

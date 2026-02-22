@@ -11,13 +11,14 @@
 <body>
 <header class="nav-shell">
     <div class="logo">Bookverse</div>
-    <form class="search" method="get" th:action="@{/mvc/books}">
-        <input name="q" th:value="${keyword}" placeholder="Buscar historias, autores o títulos"/>
+    <form class="search" method="get" th:action="@{/mvc/books/search}">
+        <input name="keyword" th:value="${keyword}" placeholder="Search for stories, authors, or titles"/>
+        <input type="hidden" name="size" th:value="${size}"/>
     </form>
 
     <nav class="nav-actions" sec:authorize="isAnonymous()">
-        <a th:href="@{/mvc/login}">Iniciar sesión</a>
-        <a class="cta" th:href="@{/mvc/login}">Regístrate</a>
+        <a th:href="@{/mvc/login}">Login</a>
+        <a class="cta" th:href="@{/mvc/login}">Sign Up</a>
     </nav>
 
 
@@ -31,11 +32,10 @@
 
 <section class="hero">
     <div class="hero-copy">
-        <h1>Ven por la historia. Quédate por la conexión.</h1>
-        <p>Explora historias modernas con carrusel en vivo y catálogo paginado. Los visitantes pueden navegar
-            libremente, el perfil desbloquea favoritos y comentarios.</p>
+        <h1>Come for the story. Stay for the connection.</h1>
+        <p>Explore modern stories with a live carousel and paginated catalog. Visitors can browse freely; profiles unlock favorites and comments.</p>
         <a class="hero-btn" th:href="@{/mvc/login}" sec:authorize="isAnonymous()">Comenzar</a>
-        <a class="hero-btn" th:href="@{/mvc/users/me/favourites}" sec:authorize="isAuthenticated()">Mis favoritos</a>
+        <a class="hero-btn" th:href="@{/mvc/users/me/favourites}" sec:authorize="isAuthenticated()">My favourites</a>
     </div>
     <div class="hero-art">
         <div class="wave"></div>

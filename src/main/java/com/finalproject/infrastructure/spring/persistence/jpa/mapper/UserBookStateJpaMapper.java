@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -30,11 +31,23 @@ public class UserBookStateJpaMapper {
                 .flatMap(userBookStateJpaRepository::findById)
                 .orElseGet(UserBookStateJpaEntity::new);
 
-        entity.setId(domain.getId().getValue());
-        entity.setUser(entityManager.getReference(UserJpaEntity.class, domain.getUserId().getValue()));
-        entity.setBook(entityManager.getReference(BookJpaEntity.class, domain.getBookId().getValue()));
-        entity.setReadStatus(domain.getRead().getOrdinaryValue());
-        entity.setRating(domain.getRating().getValue());
+        entity.setId(Optional.ofNullable(domain.getId())
+                .map(UserBookStateId::getValue)
+                .orElse(null));
+        entity.setUser(Optional.ofNullable(domain.getUserId())
+                .map(UserId::getValue)
+                .map(i -> entityManager.getReference(UserJpaEntity.class, i))
+                .orElse(null));
+        entity.setBook(Optional.ofNullable(domain.getBookId())
+                .map(BookId::getValue)
+                .map(i -> entityManager.getReference(BookJpaEntity.class, i))
+                .orElse(null));
+        entity.setReadStatus(Optional.ofNullable(domain.getRead())
+                .map(Read::getOrdinaryValue)
+                .orElse(null));
+        entity.setRating(Optional.ofNullable(domain.getRating())
+                .map(Rating::getValue)
+                .orElse(null));
         entity.setReleaseDate(
                 Optional.ofNullable(domain.getReleaseDate())
                         .map(ReleaseDate::getDate)
@@ -42,9 +55,11 @@ public class UserBookStateJpaMapper {
 
         List<CommentJpaEntity> comments = domain.getComments()
                 .stream()
-                .map(commentJpaMapper::toEntity)
-                .toList();
-        entity.setComments(comments);
+                .map(comment -> commentJpaMapper.toEntity(comment, entity))
+                .collect(Collectors.toList()); //mutable list for hibernate
+        //for orphan removal
+        entity.getComments().clear();
+        entity.getComments().addAll(comments);
 
         return entity;
     }
@@ -56,11 +71,21 @@ public class UserBookStateJpaMapper {
                 .toList();
 
         return new UserBookState.Builder()
-                .id(new UserBookStateId(entity.getId()))
-                .userId(new UserId(entity.getUser().getId()))
-                .bookId(new BookId(entity.getBook().getId()))
+                .id(Optional.ofNullable(entity.getId())
+                        .map(UserBookStateId::new)
+                        .orElse(null))
+                .userId(Optional.ofNullable(entity.getUser())
+                        .map(UserJpaEntity::getId)
+                        .map(UserId::new)
+                        .orElse(null))
+                .bookId(Optional.ofNullable(entity.getBook())
+                        .map(BookJpaEntity::getId)
+                        .map(BookId::new)
+                        .orElse(null))
                 .read(Read.of(entity.getReadStatus()))
-                .rating(new Rating(entity.getRating()))
+                .rating(Optional.ofNullable(entity.getRating())
+                        .map(Rating::new)
+                        .orElse(null))
                 .releaseDate(Optional.ofNullable(entity.getReleaseDate())
                         .map(ReleaseDate::new)
                         .orElse(null))

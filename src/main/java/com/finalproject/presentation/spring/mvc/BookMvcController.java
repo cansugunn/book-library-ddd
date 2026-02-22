@@ -39,17 +39,32 @@ public class BookMvcController {
 
     @GetMapping
     public String home(@RequestParam(required = false) String keyword, Model model) {
-        PageResult<FindBookResponse> baseBooks =
-                bookQueryApplicationService.findAll(
-                        new SearchBooksQuery(keyword, new PageQuery(0, 5)));
-        PageResult<FindBookResponse> trendingBooks =
-                bookQueryApplicationService.findAll(
-                        new SearchBooksQuery(keyword, new PageQuery(0, 20)));
+        PageResult<FindBookResponse> baseBooks = bookQueryApplicationService.findAll(
+                new SearchBooksQuery(keyword, new PageQuery(0, 5)));
+        PageResult<FindBookResponse> trendingBooks = bookQueryApplicationService.findAll(
+                new SearchBooksQuery(keyword, new PageQuery(0, 20)));
 
         model.addAttribute("keyword", keyword);
         model.addAttribute("baseBooks", baseBooks.content());
         model.addAttribute("trendingBooks", trendingBooks.content());
 
         return "mvc/books/home";
+    }
+
+    @GetMapping("/search")
+    public String search(
+            @RequestParam(required = false) String keyword,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "12") int size,
+            Model model) {
+
+        PageResult<FindBookResponse> result = bookQueryApplicationService.findAll(
+                new SearchBooksQuery(keyword, new PageQuery(page, size)));
+
+        model.addAttribute("keyword", keyword);
+        model.addAttribute("page", result);
+        model.addAttribute("size", size);
+
+        return "mvc/books/search";
     }
 }

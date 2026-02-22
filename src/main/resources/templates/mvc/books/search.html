@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${keyword != null and !keyword.isBlank()} ? 'Search: ' + ${keyword} + ' · Bookverse' : 'Browse Books · Bookverse'">Browse Books · Bookverse</title>
+    <link rel="stylesheet/less" type="text/css" href="/resources/less/mvc.less"/>
+    <script src="https://cdn.jsdelivr.net/npm/less@4"></script>
+</head>
+<body>
+
+<header class="nav-shell compact">
+    <div class="logo">Bookverse</div>
+    <form class="search" method="get" th:action="@{/mvc/books/search}">
+        <input name="keyword" th:value="${keyword}" placeholder="Search for stories, authors, or titles"/>
+        <input type="hidden" name="size" th:value="${size}"/>
+    </form>
+
+    <nav class="nav-actions" sec:authorize="isAnonymous()">
+        <a th:href="@{/mvc/login}">Login</a>
+        <a class="cta" th:href="@{/mvc/login}">Sign Up</a>
+    </nav>
+
+    <nav class="nav-actions" sec:authorize="isAuthenticated()">
+        <a th:href="@{/mvc/users/me}">
+            <span sec:authentication="name"></span>
+        </a>
+        <a th:href="@{/mvc/logout}">Logout</a>
+    </nav>
+</header>
+
+<section class="section">
+    <div class="search-header">
+        <div>
+            <h2 th:text="${keyword != null and !keyword.isBlank()} ? 'Results for &quot;' + ${keyword} + '&quot;' : 'All Books'">All Books</h2>
+            <p th:text="${page.totalElements} + ' book(s) found · page ' + (${page.page} + 1) + ' of ' + ${page.totalPages}"></p>
+        </div>
+        <a class="hero-btn" th:href="@{/mvc/books}">← Back to Home</a>
+    </div>
+
+    <!-- Book grid -->
+    <div class="grid-list" th:unless="${#lists.isEmpty(page.content)}">
+        <a class="list-item"
+           th:each="book : ${page.content}"
+           th:href="@{/mvc/books/{id}(id=${book.bookId})}">
+            <img th:src="@{/mvc/media/cover(path=${book.coverPath})}" alt="cover"/>
+            <div>
+                <strong th:text="${book.title}"></strong>
+                <p th:text="|${book.authorName} ${book.authorSurname}|"></p>
+                <p th:text="${book.year}"></p>
+            </div>
+        </a>
+    </div>
+
+    <!-- Empty state -->
+    <div th:if="${#lists.isEmpty(page.content)}" style="text-align:center; padding: 60px 0;">
+        <p style="font-size:1.2rem; color:#606775;">No books found<span th:if="${keyword != null and !keyword.isBlank()}"> for "<strong th:text="${keyword}"></strong>"</span>.</p>
+        <a class="hero-btn" th:href="@{/mvc/books/search}">Clear search</a>
+    </div>
+
+    <!-- Pagination -->
+    <nav class="pager" th:unless="${page.totalPages <= 1}">
+        <!-- Previous -->
+        <a th:href="@{/mvc/books/search(keyword=${keyword}, page=${page.page - 1}, size=${size})}"
+           th:classappend="${page.first} ? 'disabled'"
+           th:aria-disabled="${page.first}">&#8592; Prev</a>
+
+        <!-- Page numbers -->
+        <th:block th:each="i : ${#numbers.sequence(0, page.totalPages - 1)}">
+            <a th:href="@{/mvc/books/search(keyword=${keyword}, page=${i}, size=${size})}"
+               th:text="${i + 1}"
+               th:classappend="${i == page.page} ? 'active'"></a>
+        </th:block>
+
+        <!-- Next -->
+        <a th:href="@{/mvc/books/search(keyword=${keyword}, page=${page.page + 1}, size=${size})}"
+           th:classappend="${page.last} ? 'disabled'"
+           th:aria-disabled="${page.last}">Next &#8594;</a>
+    </nav>
+</section>
+
+</body>
+</html>

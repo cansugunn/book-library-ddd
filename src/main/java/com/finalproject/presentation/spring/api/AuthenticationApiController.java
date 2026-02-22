@@ -5,7 +5,6 @@ import com.finalproject.application.ports.input.services.UserApplicationService;
 import com.finalproject.infrastructure.spring.security.jwt.JwtTokenProvider;
 import com.finalproject.presentation.spring.api.dto.AuthResponse;
 import com.finalproject.presentation.spring.api.dto.LoginRequest;
-import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -25,7 +24,6 @@ public class AuthenticationApiController {
         this.jwtTokenProvider = jwtTokenProvider;
     }
 
-    @Operation(summary = "Login and receive JWT token", security = {})
     @SecurityRequirements
     @PostMapping("/login")
     public AuthResponse login(@Valid @RequestBody LoginRequest request) {
