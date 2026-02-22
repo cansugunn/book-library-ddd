@@ -18,6 +18,20 @@ CREATE TABLE IF NOT EXISTS books (
     FOREIGN KEY (author_id) REFERENCES authors(id)
     );
 
+
+CREATE TABLE IF NOT EXISTS books_read_model (
+    id BIGINT PRIMARY KEY,
+    author_id BIGINT NOT NULL,
+    author_name VARCHAR(100) NOT NULL,
+    author_surname VARCHAR(100) NOT NULL,
+    author_website VARCHAR(255),
+    title VARCHAR(255) NOT NULL,
+    year INT NOT NULL,
+    number_of_pages INT NOT NULL,
+    cover_path VARCHAR(255),
+    about TEXT
+);
+
 CREATE TABLE IF NOT EXISTS userinfo (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     username VARCHAR(100) NOT NULL UNIQUE,

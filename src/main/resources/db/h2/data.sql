@@ -53,6 +53,11 @@ INSERT INTO books (author_id, title, year, number_of_pages, cover_path, about)
 VALUES (6, 'Jane Eyre', 1908, 307, NULL, 'About Jane Eyre');
 INSERT INTO books (author_id, title, year, number_of_pages, cover_path, about)
 VALUES (7, 'Wuthering Heights', 1856, 178, NULL, 'About Wuthering Heights');
+INSERT INTO books_read_model (id, author_id, author_name, author_surname, author_website, title, year, number_of_pages, cover_path, about)
+SELECT b.id, a.id, a.name, a.surname, a.website, b.title, b.year, b.number_of_pages, b.cover_path, b.about
+FROM books b
+         JOIN authors a ON a.id = b.author_id;
+
 INSERT INTO userinfo (username, password, type)
 VALUES ('alice', 'jiPZhSe6GrQkzlx8E+iLDA==', 1);
 INSERT INTO userinfo (username, password, type)
