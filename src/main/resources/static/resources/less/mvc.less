@@ -136,8 +136,22 @@ body {
 .list-item img { width: 88px; height: 120px; border-radius: 10px; object-fit: cover; background: #dfe2e8; }
 .list-item p { margin: 0; color: @muted; font-size: .9rem; }
 
-.pager { display: flex; gap: 12px; align-items: center; justify-content: center; margin-top: 20px; }
-.pager a { color: @text; text-decoration: none; border: 1px solid @line; padding: 8px 12px; border-radius: 10px; background: @surface; }
+.pager { display: flex; gap: 12px; align-items: center; justify-content: center; margin-top: 20px; flex-wrap: wrap; }
+.pager a { color: @text; text-decoration: none; border: 1px solid @line; padding: 8px 14px; border-radius: 10px; background: @surface; font-weight: 600; transition: background .15s, color .15s; }
+.pager a:hover:not(.disabled):not(.active) { background: @accent; color: #fff; border-color: @accent; }
+.pager a.active { background: @accent2; color: #fff; border-color: @accent2; pointer-events: none; }
+.pager a.disabled { color: @muted; pointer-events: none; opacity: .45; }
+
+.search-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 20px;
+  h2 { margin: 0; font-size: 1.4rem; }
+  p  { margin: 0; color: @muted; font-size: .95rem; }
+}
 
 .page { padding: 36px 56px; }
 .card { background:@surface; border: 1px solid @line; border-radius: 16px; padding: 20px; box-shadow: 0 10px 30px rgba(15,18,25,.05); }

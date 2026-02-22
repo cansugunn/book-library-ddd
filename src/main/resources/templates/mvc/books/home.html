@@ -11,8 +11,9 @@
 <body>
 <header class="nav-shell">
     <div class="logo">Bookverse</div>
-    <form class="search" method="get" th:action="@{/mvc/books}">
-        <input name="q" th:value="${keyword}" placeholder="Search for stories, authors, or titles"/>
+    <form class="search" method="get" th:action="@{/mvc/books/search}">
+        <input name="keyword" th:value="${keyword}" placeholder="Search for stories, authors, or titles"/>
+        <input type="hidden" name="size" th:value="${size}"/>
     </form>
 
     <nav class="nav-actions" sec:authorize="isAnonymous()">

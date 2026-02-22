@@ -12,32 +12,33 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 @EnableWebSecurity
 public class MvcSecurityConfig {
-    @Bean
-    public SecurityFilterChain mvcSecurityFilterChain(HttpSecurity http) throws Exception {
-        http
-                .securityMatcher("/**")
-                .csrf().and()
-                .headers(headers ->
-                        headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin))
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/",
-                                "/mvc/media/cover",
-                                "/mvc/books",
-                                "/mvc/books/**",
-                                "/mvc/login",
-                                "/resources/**")
-                        .permitAll()
-                        .anyRequest()
-                        .authenticated())
-                .formLogin(form -> form
-                        .loginPage("/mvc/books")
-                        .loginProcessingUrl("/mvc/login")
-                        .defaultSuccessUrl("/mvc/books", true)
-                        .failureUrl("/mvc/login?error"))
-                .logout(logout -> logout
-                        .logoutUrl("/mvc/logout")
-                        .logoutSuccessUrl("/mvc/login?logout"));
+        @Bean
+        public SecurityFilterChain mvcSecurityFilterChain(HttpSecurity http) throws Exception {
+                http
+                                .securityMatcher("/**")
+                                .csrf().and()
+                                .headers(headers -> headers
+                                                .frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin))
+                                .authorizeHttpRequests(auth -> auth
+                                                .requestMatchers("/",
+                                                                "/mvc/media/cover",
+                                                                "/mvc/books",
+                                                                "/mvc/books/search",
+                                                                "/mvc/books/**",
+                                                                "/mvc/login",
+                                                                "/resources/**")
+                                                .permitAll()
+                                                .anyRequest()
+                                                .authenticated())
+                                .formLogin(form -> form
+                                                .loginPage("/mvc/books")
+                                                .loginProcessingUrl("/mvc/login")
+                                                .defaultSuccessUrl("/mvc/books", true)
+                                                .failureUrl("/mvc/login?error"))
+                                .logout(logout -> logout
+                                                .logoutUrl("/mvc/logout")
+                                                .logoutSuccessUrl("/mvc/login?logout"));
 
-        return http.build();
-    }
+                return http.build();
+        }
 }
