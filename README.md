@@ -1,10 +1,8 @@
 # Book Library (Onion Architecture, Hexagonal Architecture, Domain Driven Design), CQRS & A Lot Of Technologies (Spring Boot, Spring MVC, OpenApi, Thymeleaf, Spring Security, Spring Data, H2, Docker, Mysql etc...)
 
-<div style="display: flex; justify-content: center; gap: 20px; flex-wrap: wrap;">
-  <img src="images/3.png" style="width: 30%; min-width: 250px;" />
-  <img src="images/2.png" style="width: 30%; min-width: 250px;" />
-  <img src="images/4.png" style="width: 30%; min-width: 250px;" />
-</div>
+![](images/3.png)
+![](images/2.png)
+![](images/4.png)
 
 A library manager built with hexagonal architecture principles and clean architecture domain-driven design (DDD), including patterns such as CQRS.
 
